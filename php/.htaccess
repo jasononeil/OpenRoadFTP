@@ -1,0 +1,3 @@
+# Allow bigger uploads in this directory	
+php_value post_max_size 3M
+php_value upload_max_filesize 2M

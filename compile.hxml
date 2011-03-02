@@ -1,0 +1,46 @@
+-php php/
+-main OpenRoadFtp
+-cp src/classes/
+-cp src/
+
+--next
+-php php/
+--php-front api.php
+-main Api
+-cp src/classes/
+-cp src/
+
+--next
+-php php/
+--php-front download.php
+-main Download
+-cp src/classes/
+-cp src/
+
+--next
+-php php/
+--php-front upload.php
+-main Upload
+-cp src/classes/
+-cp src/
+
+--next
+-js includes/js/ajaxclient.js
+-main AjaxClient
+-cp src/classes/
+-cp src/
+-lib feffects
+
+--next
+-php php/
+--php-front xmlTest.php
+-main XmlTest
+-cp src/classes/
+-cp src/
+
+--next
+-php php/
+--php-front ftpTest.php
+-main FtpTest
+-cp src/classes/
+-cp src/

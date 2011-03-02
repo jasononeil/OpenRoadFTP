@@ -1,0 +1,33 @@
+<div id="backButton" class="button"></div>
+<div id="browserMask">
+	<div id="loading"><img src="img/loading.gif" alt="Loading" /></div>
+	<div id="dirListContainer">
+		
+	</div>
+</div>
+<div id="sidebar">
+	<div id="fileinfo">
+		<div id="icon"></div>
+		<h4>MyFile.mp4</h4>
+		<dl>
+			<dt>Size</dt><dd class="size">64</dd>
+			<dt>Type</dt><dd class="type">64</dd>
+			<dt>Modified</dt><dd class="modified">64</dd>
+			<dt>Owner</dt><dd class="owner">64</dd>
+			<dt>Group</dt><dd class="group">64</dd>
+			<dt>Access</dt><dd class="permissions">64</dd>
+		</dl>
+	</div>
+	<div id="toolbar">
+		<div id="uploadStatusArea"></div>
+		<div id="upload" class="btnLarge">Upload File</div>
+		<div id="download" class="btnLarge">Download</div>
+		<div id="cut" class="btnSmall">Cut</div>
+		<div id="copy" class="btnSmall">Copy</div>
+		<div id="paste" class="btnSmall">Paste</div>
+		<div id="newFolder" class="btnMedium">New Folder</div>
+		<div id="refresh" class="btnMedium">Refresh</div>
+		<div id="rename" class="btnMedium">Rename</div>
+		<div id="delete" class="btnMedium">Delete</div>
+	</div>
+</div>

@@ -1,0 +1,22 @@
+p
+{
+	text-indent: 0;
+	margin-bottom: 0.5em;
+	margin-top: 0.5em;
+}
+
+a:link, a:visited
+{
+	color: rgb(0,0,255);
+}
+
+blockquote
+{
+	margin-left: 40px;
+	border: 1px solid #DDDDDD;
+}
+
+blockquote table.Prototype
+{
+	margin:0;
+}

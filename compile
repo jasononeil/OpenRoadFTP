@@ -1,0 +1,14 @@
+#!/bin/sh
+
+echo ""
+
+#echo "Compiling haXe code"
+haxe compile.hxml
+
+#echo "Copying Templates"
+rsync --delete -a includes/* --exclude=/tmp/ php/
+
+#echo "Compiling documentation"
+#naturaldocs -i haxe/ -o HTML docs/ -p naturaldocs/ -s Default customstyle
+
+echo ""

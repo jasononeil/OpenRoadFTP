@@ -1,0 +1,49 @@
+<?php
+
+// function based on Jonas John's count_files_recursive()
+// from http://www.jonasjohn.de/snippets/php/count-files-recursive.htm
+
+function delete_empty_dirs($path, $depth = 0) 
+{
+
+	// $path should contain an ending slash
+
+	$files = 0;
+
+	// open dir:
+	$dir = opendir($path);
+	if (!$dir) {return 0;}
+
+	while (($file = readdir($dir)) !== false) 
+	{
+
+		if ($file[0] == '.') { continue; }
+
+		if (is_dir($path.$file))
+		{        
+			// recursive:
+			$files += delete_empty_dirs($path.$file.DIRECTORY_SEPARATOR, $depth + 1);
+		}
+		else 
+		{
+			// increase file count
+			$files++;
+		}
+	}    
+	// close dir:
+	closedir($dir);
+
+	// if this directory is empty and it's not the original parent directory, delete it
+	if ($files == 0 && $depth > 0)
+	{
+	rmdir($path);
+	
+	}
+
+return $files;
+}
+
+
+delete_empty_dirs(dirname(__FILE__) . '/../tmp/');
+
+?>
