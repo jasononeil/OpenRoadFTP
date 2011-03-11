@@ -1,0 +1,4 @@
+ package ftp;
+class FtpDir
+{
+}
