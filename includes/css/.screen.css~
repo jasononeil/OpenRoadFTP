@@ -401,7 +401,7 @@ hr.break
 {
 	height: 22px;
 	margin: 0 6px 2px 0;
-	font-family: sans;
+	font-family: "Arial";
 	text-align: center;
 	padding-top: 4px;
 	
