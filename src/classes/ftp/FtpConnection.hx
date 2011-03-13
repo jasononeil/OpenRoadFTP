@@ -18,7 +18,7 @@ class FtpConnection
 	public var conn:Dynamic;
 	public var isReady:Bool;
 	
-	public function new(server_in, user_in, pass_in, tmpDir_in, fakeRoot_in:String, port_in:Int, timeout_in:Int)
+	public function new(server_in, user_in, pass_in, tmpDir_in, ?fakeRoot_in:String, ?port_in:Int, ?timeout_in:Int)
 	{
 		if (timeout_in == null) timeout_in = 90;
 		if (port_in == null) port_in = 21;
@@ -121,9 +121,13 @@ class FtpConnection
 			na = untyped __call__(ftp_rawlist, conn, parentPath, recursive);
 			a = untyped php.Lib.toHaxeArray(na);
 			/* REALLY NOT SURE IF THIS FILTER FUNCTION IS CORRECT, OR WHAT IT DOES... */
+			
 			var filter = function (line_in) {
-				var first8blocks = ~/[\S\s]{8}/;
+				// the first 8 blocks - think this is the first 8 words followed by whitespace.  What's left should be the name
+				var first8blocks = ~/(\S+\s+){8}/;
 				var leftOverName = first8blocks.replace(line_in, "");
+				// If the file is a link, (in which case the line begins with 'l', then it has the link target, not just the name
+				// We need to get ONLY the bit before the ' -> '
 				if (line_in.startsWith('l')) {
 					leftOverName = leftOverName.split(' -> ')[0];
 				}
@@ -167,9 +171,9 @@ class FtpConnection
 		// now copy it back up
 		try {
 			newPathOnFtpServer = newPath_in;
-			var folder:String;
-			var name:String;
-			var extension:String;
+			var folder:String = null;
+			var name:String = null;
+			var extension:String = null;
 			var number = 1;
 			// if the filename already exists, add a number to our filename.  Do this till it doesn't exist
 			while (exists(newPathOnFtpServer)) {
@@ -205,7 +209,7 @@ class FtpConnection
 	{
 		var didDeleteWork:Bool;
 		var path = sanitizePath(path_in);
-		var fileList = FtpFileList.getFileList(this,path + "/");
+		var fileList = new FtpFileList(this,path + "/");
 		for (ftpDir in fileList.dirs)
 		{
 			deleteDirectory(ftpDir.path);

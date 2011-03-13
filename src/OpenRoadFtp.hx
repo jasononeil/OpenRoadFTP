@@ -24,9 +24,8 @@ class OpenRoadFtp
 		});
 		
 		php.Lib.print('<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">');
+		
 		php.Lib.print(tpl.getOutput());
-		
-		
-		new Error('This is an error in the main body');
+		//new Error('This is an error in the main body');
     	}
 }

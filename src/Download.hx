@@ -4,7 +4,6 @@ We then see if we can establish an FTP connection.  If we can, start a session..
 */
 
 import ftp.FtpConnection;
-import hxbase.
 import Api;
 
 class Download

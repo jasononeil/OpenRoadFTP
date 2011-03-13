@@ -1,4 +1,4 @@
-import hxbase.xml.AdvXmlItem;
+import hxbase.xml.XmlNode;
 import hxbase.xml.XmlList;
 import hxbase.tpl.HxTpl;
 
@@ -13,7 +13,7 @@ class XmlTest
     		
 		/*
 		
-		var advXml:AdvXmlItem;
+		var advXml:XmlNode;
     		var children:XmlList;
     		var xmlStr:String;
 		
@@ -21,7 +21,7 @@ class XmlTest
     			<child>2 two</child>
     			<child>3 three</child></parent>";
     		
-		advXml = new AdvXmlItem(xmlStr);
+		advXml = new XmlNode(xmlStr);
 		
 		var str:String;
 		str = advXml.xml.toString();
@@ -51,12 +51,12 @@ class XmlTest
 		
 		// okay, try it multiple root elements, see how it behaves
 		xmlStr = "<child>1 one</child><child>2 two</child><child>3 three</child>";
-		advXml = new AdvXmlItem(xmlStr);
+		advXml = new XmlNode(xmlStr);
 		
 		str = Std.string(advXml);
 		str = Std.string(advXml.type);						// document
 		str = Std.string(advXml.firstChild);					// <child>1 one</child>
-		str = Std.string(new AdvXmlItem(null, null, advXml.firstChild).type);	// document
+		str = Std.string(new XmlNode(null, null, advXml.firstChild).type);	// document
 		str = Std.string(advXml.numChildren);
 		
 		
@@ -64,7 +64,7 @@ class XmlTest
 		// Let's try some attributes
 		
 		xmlStr = "<myField size='big'>Hi</myField>";
-		advXml = new AdvXmlItem(xmlStr);
+		advXml = new XmlNode(xmlStr);
 		
 		str = "Does this have the attribute size: " + advXml.firstChild.hasAtt('size');	// 1
 		str = "Does this have the attribute sizes: " + advXml.firstChild.hasAtt('size');	// -nothing,null-
@@ -90,16 +90,16 @@ class XmlTest
     			<child>2 two</child>
     			<child>3 three</child></parent>";
     		
-		advXml = new AdvXmlItem(xmlStr);
-		var xmlParent:AdvXmlItem = advXml.firstChild;
+		advXml = new XmlNode(xmlStr);
+		var xmlParent:XmlNode = advXml.firstChild;
 		str = "Name: " + xmlParent.name;									// parent
 		str = "Number: " + xmlParent.numChildren;								// 5 (text nodes included...)
 		
-		var first:AdvXmlItem = xmlParent.firstChild;
+		var first:XmlNode = xmlParent.firstChild;
 		str = "Position of found child: " + xmlParent.children.indexOf(first);					// 1
-		str = "Position of found child: " + xmlParent.children.indexOf(new AdvXmlItem("FAKE"));			// 0
+		str = "Position of found child: " + xmlParent.children.indexOf(new XmlNode("FAKE"));			// 0
 		
-		var third:AdvXmlItem = xmlParent.children.getAt(3);
+		var third:XmlNode = xmlParent.children.getAt(3);
 		str = "3rd is: " + third;										// <child>2 two</child>
 		str = "Position of this child: " + xmlParent.children.indexOf(third);					// 3
 		
@@ -109,32 +109,32 @@ class XmlTest
 		//
 		//
 		
-		var childOfThird:AdvXmlItem;
-		childOfThird = new AdvXmlItem("<b>YAR!</b>").firstChild;
+		var childOfThird:XmlNode;
+		childOfThird = new XmlNode("<b>YAR!</b>").firstChild;
 		
 		str = childOfThird.toString();										// <b>YAR!</b>
 		str = Std.string(third.addChildAt(childOfThird,0));							// <child><b>YAR!</b>2 two</child>
-		str = Std.string(third.addChildAt(new AdvXmlItem(childOfThird),2));						// <child><b>YAR!</b>2 two<b>YAR!</b></child>
+		str = Std.string(third.addChildAt(new XmlNode(childOfThird),2));						// <child><b>YAR!</b>2 two<b>YAR!</b></child>
 		
-		str = Std.string(third.addChildAt(new AdvXmlItem("<i>This index is too high</i>"),32));			// putting an index that is too high just puts it at the end
-		str = Std.string(third.addChildAt(new AdvXmlItem("<i>This index <u>is</u> too low</i>"), -5));			// putting an index too low just puts it at the front
-		//str = Std.string(third.addChildAt(new AdvXmlItem("<i>This index is not an integer</i>"), 1.5));		// will not compile (go strict typing!)
+		str = Std.string(third.addChildAt(new XmlNode("<i>This index is too high</i>"),32));			// putting an index that is too high just puts it at the end
+		str = Std.string(third.addChildAt(new XmlNode("<i>This index <u>is</u> too low</i>"), -5));			// putting an index too low just puts it at the front
+		//str = Std.string(third.addChildAt(new XmlNode("<i>This index is not an integer</i>"), 1.5));		// will not compile (go strict typing!)
 		
-		str = Std.string(xmlParent.appendChild(new AdvXmlItem("<firstborn>This goes at the end</firstborn>")));	// places element at end of children
-		str = Std.string(xmlParent.prependChild(new AdvXmlItem("<baby>This should be at the front</baby>")));	// places element at front of children
+		str = Std.string(xmlParent.appendChild(new XmlNode("<firstborn>This goes at the end</firstborn>")));	// places element at end of children
+		str = Std.string(xmlParent.prependChild(new XmlNode("<baby>This should be at the front</baby>")));	// places element at front of children
 		
-		var child3:AdvXmlItem = xmlParent.getChildren().getAt(6);							// <child>3 three</child>
+		var child3:XmlNode = xmlParent.getChildren().getAt(6);							// <child>3 three</child>
 		str = Std.string(xmlParent.getChildren().indexOf(child3));						// 6
 		str = Std.string(child3.index);										// 6
-		str = Std.string(xmlParent.addChildBefore(new AdvXmlItem("<note>This is before child 3</note>"), child3));	// appears the very node before child3
-		str = Std.string(xmlParent.addChildAfter(new AdvXmlItem("<note>This is after child 3</note>"), child3));	// appears the very node after child3
+		str = Std.string(xmlParent.addChildBefore(new XmlNode("<note>This is before child 3</note>"), child3));	// appears the very node before child3
+		str = Std.string(xmlParent.addChildAfter(new XmlNode("<note>This is after child 3</note>"), child3));	// appears the very node after child3
 		
 		*/
 		
-		pushResults('AdvXmlItem Test page');
-		pushResults('This is a test page to test as many of the functions of my AdvXmlItem class as I can');
+		pushResults('XmlNode Test page');
+		pushResults('This is a test page to test as many of the functions of my XmlNode class as I can');
 		
-		var xmlStr:String, xmlDoc:AdvXmlItem;
+		var xmlStr:String, xmlDoc:XmlNode;
 		
 		xmlStr = "
 		<html>
@@ -152,7 +152,7 @@ class XmlTest
 		</html>
 		";
 		
-		xmlDoc = new AdvXmlItem(xmlStr);
+		xmlDoc = new XmlNode(xmlStr);
 		
 		pushResults();
 		pushResults('Our starting XML is: ');
@@ -160,15 +160,15 @@ class XmlTest
 		
 		pushResults('So we know constructing from a string works, provide you give it valid XML');
 		
-		var htmlElm:AdvXmlItem = xmlDoc.children.getAt(2);
+		var htmlElm:XmlNode = xmlDoc.children.getAt(2);
 		
 		pushResults();
-		pushResults('By default when you construct from a string, the AdvXmlItem object will have the type "document".');
+		pushResults('By default when you construct from a string, the XmlNode object will have the type "document".');
 		pushResults('You need to access the children to reach the real elements you have defined.');
 		pushResults('So to get the HTML element through xmlDoc.children.getAt() ');
 		pushResults('   xmlDoc.children.getAt(2).name = ' + xmlDoc.getChildAt(2).name);
 		
-		var bodyElm:AdvXmlItem = htmlElm.getChildAt(4);
+		var bodyElm:XmlNode = htmlElm.getChildAt(4);
 		
 		pushResults(bodyElm.name);
 		
@@ -233,17 +233,17 @@ class XmlTest
 		pushResults('Our starting XML is: ');
 		pushResults(xmlDoc);
 		
-		var ul:AdvXmlItem;
+		var ul:XmlNode;
 		ul = bodyElm.lastChild.prev;
 		ul.empty();
 		
-		ul.appendChild(new AdvXmlItem("<li>YEAH</li>"));
-		ul.prependChild(new AdvXmlItem("
+		ul.appendChild(new XmlNode("<li>YEAH</li>"));
+		ul.prependChild(new XmlNode("
 			<li>Combined Add</li>
 			<li>Combined Add 2</li>
 			"));
-		var loserMenuItem:AdvXmlItem;
-		loserMenuItem = new AdvXmlItem("<test />");
+		var loserMenuItem:XmlNode;
+		loserMenuItem = new XmlNode("<test />");
 		loserMenuItem.addThisTo(ul,3);
 		
 		ul.removeChildAt(3).removeChildAt(1);					// removes whitespace, working correctly
@@ -281,7 +281,7 @@ class XmlTest
 		pushResults();
 		pushResults('Now try to copy that ridiculous body:');
 		bodyElm = htmlElm.getChildAt(4);
-		var duplicate:AdvXmlItem;
+		var duplicate:XmlNode;
 		duplicate = bodyElm.copy();
 		bodyElm.parent.addChildAfter(duplicate, bodyElm);
 		pushResults(xmlDoc);
@@ -290,14 +290,14 @@ class XmlTest
 		pushResults();
 		pushResults('Testing how the constructor works.');
 		
-		var constructByString:AdvXmlItem, constructByXml:AdvXmlItem, constructByAdvXmlItem:AdvXmlItem;
+		var constructByString:XmlNode, constructByXml:XmlNode, constructByXmlNode:XmlNode;
 		
-		constructByString = new AdvXmlItem("<b>Hey you</b>");
-		constructByXml = new AdvXmlItem(constructByString.xml);
-		constructByAdvXmlItem = new AdvXmlItem(constructByString);
+		constructByString = new XmlNode("<b>Hey you</b>");
+		constructByXml = new XmlNode(constructByString.xml);
+		constructByXmlNode = new XmlNode(constructByString);
 		pushResults("By String: 	" + constructByString);
 		pushResults("By Xml:    	" + constructByXml);
-		pushResults("By AdvXmlItem: 	" + constructByAdvXmlItem);
+		pushResults("By XmlNode: 	" + constructByXmlNode);
 		
 		pushResults();
 		pushResults("So if we change constructByString, then constructByXml should also change.");
@@ -305,10 +305,10 @@ class XmlTest
 		
 		pushResults("By String: 	" + constructByString);
 		pushResults("By Xml:    	" + constructByXml);
-		pushResults("By AdvXmlItem: 	" + constructByAdvXmlItem);
+		pushResults("By XmlNode: 	" + constructByXmlNode);
 		
 		
-		//new AdvXmlItem("<invalue>Bad markup</invalid>");  // Fails, as it should
+		//new XmlNode("<invalue>Bad markup</invalid>");  // Fails, as it should
 		
 		php.Lib.print('<pre style="border: 1px solid black;">' + StringTools.htmlEscape(str) + '</pre>');
 		

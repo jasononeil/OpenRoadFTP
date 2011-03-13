@@ -2,6 +2,7 @@
 import ftp.FtpConnection;
 import ftp.FtpFileList;
 import ftp.FtpItem;
+import ftp.FtpFileType;
 import hxbase.session.SessionHandler;
 import hxbase.tpl.HxTpl;
 #end
@@ -243,7 +244,7 @@ class Api
 		checkLoggedIn();
 		
 		var tpl = new HxTpl();
-		var ftpFileList = FtpFileList.getFileList(ftp,path);
+		var ftpFileList = new FtpFileList(ftp,path);
 		
 		tpl.loadTemplateFromFile('./tpl/dirList.hxtpl');
 		
@@ -291,7 +292,7 @@ class Api
 		
 		var file:FtpItem;
 		file = ftp.getFileAt(oldPath);
-		if (file.type != FileType.link)
+		if (file.type != FtpFileType.link)
 		{
 			file.move(newPath);
 		}
@@ -307,7 +308,7 @@ class Api
 		
 		var file:FtpItem;
 		file = ftp.getFileAt(path);
-		if (file.type != FileType.link)
+		if (file.type != FtpFileType.link)
 		{
 			file.delete();
 		}
@@ -325,7 +326,7 @@ class Api
 		for (path in pathsToDelete)
 		{
 			file = ftp.getFileAt(path);
-			if (file.type != FileType.link)
+			if (file.type != FtpFileType.link)
 			{
 				file.delete();
 			}
@@ -345,7 +346,7 @@ class Api
 		{
 			var newPath = newDir + fileData.name;
 			file = ftp.getFileAt(fileData.oldPath);
-			if (file.type != FileType.link)
+			if (file.type != FtpFileType.link)
 			{
 				file.move(newPath);
 			}
