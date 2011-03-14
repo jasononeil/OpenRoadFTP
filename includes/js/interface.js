@@ -796,11 +796,9 @@ var interface =
 
 $(document).ready(function ()
 	{
-		alert('from here');
 		AjaxClient.cnx.setErrorHandler(interface.handleError);
 		interface.defaultAction();
 		
 		// every 2 minutes, keep the session alive
 		setInterval("interface.keepalive()", 1000 * 120);
 	});
-alert ('here then');

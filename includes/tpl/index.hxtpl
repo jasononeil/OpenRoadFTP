@@ -2,7 +2,8 @@
 <head>
 	<title>{site.title}</title>
 	<link rel="stylesheet" type="text/css" href="css/screen.css" />
-	<script type="text/javascript" src="js/scripts.php" > </script>
+	<script type="text/javascript" src="js/scripts.php"> </script>
+	<script type="text/javascript">/**nothing**/</script>
 </head>
 <body>
 	
