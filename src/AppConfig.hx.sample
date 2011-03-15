@@ -1,0 +1,7 @@
+class AppConfig
+{
+	static public var ftpServer = "localhost";
+	static public var siteTitle = "localhost";
+	static public var ftpServer = "localhost";
+	
+}
