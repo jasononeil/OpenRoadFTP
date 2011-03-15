@@ -15,11 +15,11 @@ class OpenRoadFtp
 		
 		tpl = new HxTpl();
 		tpl.loadTemplateFromFile('./tpl/index.hxtpl');
-		tpl.assign("site.title", "WBC Student Server 1");
+		tpl.assign("site.title", AppConfig.siteTitle);
 		
 		tpl.assignObject("site", {
-			title : "OpenRoad FTP",
-			subtitle : "Student Logon",
+			title : AppConfig.siteTitle,
+			subtitle : "subtitle",
 			copyright : "Created 2010 Jason O'Neil.  Released under a GPL license."
 		});
 		

@@ -5,6 +5,8 @@ import ftp.FtpItem;
 import ftp.FtpFileType;
 import hxbase.session.SessionHandler;
 import hxbase.tpl.HxTpl;
+import AppConfig;
+using Lambda;
 #end
 import hxbase.util.Error;
 
@@ -83,7 +85,7 @@ class Api
 	public function new()
 	{
 		#if php
-		session = new SessionHandler('WbcStudentLoginSessionID', 300);
+		session = new SessionHandler(AppConfig.SessionID, AppConfig.SessionTimeOut);
 		#end
 	}
 	
@@ -91,35 +93,11 @@ class Api
 	{
 		#if php
 		
-		var server:String = "localhost";
+		var server:String = AppConfig.ftpServer;
 		var tmpFolder:String = "tmp/" + id + "-" + username;
 		var home:String;
 		
-		/*
-		// Find out where their home dir is
-		var yearAtEndOfUsername:EReg = ~/[0-9]{4}$/;
-		
-		// if yearAtEndOfUsername is found in the username
-		if (yearAtEndOfUsername.match(username))
-		{
-			// they're a student, and their home folder is in a subdir named after that year
-			var yeargroup:String = yearAtEndOfUsername.matched(0);
-			home = "/home/students/" + yeargroup + "/" + username;
-		}
-		else
-		{
-			home = "/home/staff/" + username; 
-		}
-		
-		// for testing at home
-		if (username == "miagi")
-		{
-			home = "/home/jason";
-			server = 'localhost';
-			username = 'jason';
-		}
-		*/
-		home = "/home/" + username;
+		home = AppConfig.getHomeDir(username);
 		
 		try
 		{
@@ -259,7 +237,8 @@ class Api
 		
 		for (link in ftpFileList.links)
 		{
-			if (link.name == "Y-Drive" || link.name == "S-Drive")
+			// If we're allowing all symlinks, or if we're filtering them, and this link is allowed
+			if (!AppConfig.limitSymlinks || AppConfig.allowedSymlinks.has(link.name))
 			{
 				var ftpItem:HxTpl = tpl.newLoop("ftpItem");
 				ftpItem.assignObject("file", link);
