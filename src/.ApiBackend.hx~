@@ -1,7 +1,0 @@
-import jasononeil.ftp.FtpConnection;
-import jasononeil.util.SessionHandler;
-
-class ApiBackend
-{
-
-}
