@@ -4,7 +4,7 @@ class AppConfig
 	static public var ftpServer:String = "localhost";
 	
 	/** The visible title of your site */
-	static public var siteTitle:String = "localhost";
+	static public var siteTitle:String = "OpenRoad FTP";
 	
 	/** Session ID used in cookies etc.  Should be set to something unique for your website. */
 	static public var sessionID:String = "WbcStudentLoginSessionID";
