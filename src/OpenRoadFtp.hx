@@ -5,6 +5,7 @@ import ftp.FtpItem;
 import ftp.FtpFileList;
 import hxbase.session.SessionHandler;
 import hxbase.util.Error;
+import AppConfig;
 
 class OpenRoadFtp
 {
