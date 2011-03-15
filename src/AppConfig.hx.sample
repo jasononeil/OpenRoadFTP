@@ -1,7 +1,27 @@
 class AppConfig
 {
-	static public var ftpServer = "localhost";
-	static public var siteTitle = "localhost";
-	static public var ftpServer = "localhost";
+	/** the ftp server to use */
+	static public var ftpServer:String = "localhost";
 	
+	/** The visible title of your site */
+	static public var siteTitle:String = "localhost";
+	
+	/** Session ID used in cookies etc.  Should be set to something unique for your website. */
+	static public var sessionID:String = "WbcStudentLoginSessionID";
+	
+	/** Number of seconds the cookie should last for.  Useful for reopening closed tabs etc... */
+	static public var sessionTimeOut:Int = 300;
+	
+	/** If set to false, all symlinks are allowed.  If set to true, only symlinks with names matching allowedSymlinks are let through */
+	static public var limitSymlinks:Bool = false;
+	
+	/** Allow symbolic links with these names.  If it's empty, no symbolic links will be allowed. */
+	static public var allowedSymlinks:Array<String> = [];
+	
+	/** A function that tells you which home directory to use. Can be used for servers with weird home directory settings.  */
+	static public function getHomeDir(username:String)
+	{
+		// return "/home/" + username;
+		return "/";
+	}
 }
