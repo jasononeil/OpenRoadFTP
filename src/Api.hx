@@ -85,7 +85,7 @@ class Api
 	public function new()
 	{
 		#if php
-		session = new SessionHandler(AppConfig.SessionID, AppConfig.SessionTimeOut);
+		session = new SessionHandler(AppConfig.sessionID, AppConfig.sessionTimeOut);
 		#end
 	}
 	
