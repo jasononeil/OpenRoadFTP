@@ -88,6 +88,7 @@ class FtpItem
 				ftpConn.deleteDirectory(path);
 			case FtpFileType.file:
 				ftpConn.deleteFile(path);
+			default:
 		}
 	}
 	
