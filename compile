@@ -3,7 +3,8 @@
 echo ""
 
 #echo "Compiling haXe code"
-haxe compile.hxml
+haxe server.hxml
+haxe client.hxml
 
 #echo "Copying Templates"
 rsync --delete -a includes/* --exclude=/tmp/ php/

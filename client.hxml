@@ -1,0 +1,6 @@
+-js includes/js/ajaxclient.js
+-main AjaxClient
+-cp src/classes/
+-cp src/
+-lib feffects
+
