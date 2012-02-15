@@ -35,10 +35,10 @@ class Error
 		if (suggestion_in == null) suggestion_in = "";
 		if (explanation_in == null) explanation_in = "";
 		var type = {
-			code: "code_in",
-			error: "error_in",
-			explanation: "explanation_in",
-			suggestion: "suggestion_in"
+			code: code_in,
+			error: error_in,
+			explanation: explanation_in,
+			suggestion: suggestion_in
 		}
 		errorTypes.set(code_in,type);
 	}
