@@ -9,6 +9,7 @@ include("cufon.js");
 include("Oceania.font.js");
 
 include("ajaxclient.js");
+echo ";\n";
 include("ajaxupload.js");
 
 
