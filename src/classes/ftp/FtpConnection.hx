@@ -67,7 +67,7 @@ class FtpConnection
 		var result = false;
 		var path = sanitizePath(path_in);
 		try {
-			result = untyped __call__(ftp_chdir, conn, path);
+			result = untyped __call__("ftp_chdir", conn, path);
 		} catch (e:String) {
 			result = false;	
 		}
@@ -78,7 +78,7 @@ class FtpConnection
 	{
 		var path = sanitizePath(path_in);
 		var filesize = null;
-		filesize = untyped __call__(ftp_size, conn, path);
+		filesize = untyped __call__("ftp_size", conn, path);
 		return (filesize == -1) ? false : true;
 	}
 	
@@ -110,7 +110,7 @@ class FtpConnection
 		if (weAreListingChildren == false) weAreGettingDirInfo = isDir(path);
 		if (weAreListingChildren || weAreGettingDirInfo == false)
 		{
-			na = untyped __call__(ftp_rawlist, conn, path, recursive);
+			na = untyped __call__("ftp_rawlist", conn, path, recursive);
 			a = untyped php.Lib.toHaxeArray(na);
 		}
 		else
@@ -118,7 +118,7 @@ class FtpConnection
 			var onlyLastName = ~/([^\/]+)\$/;
 			var name = onlyLastName.match(path) ? onlyLastName.matched(0) : null;
 			var parentPath = onlyLastName.replace(path,"");
-			na = untyped __call__(ftp_rawlist, conn, parentPath, recursive);
+			na = untyped __call__("ftp_rawlist", conn, parentPath, recursive);
 			a = untyped php.Lib.toHaxeArray(na);
 			/* REALLY NOT SURE IF THIS FILTER FUNCTION IS CORRECT, OR WHAT IT DOES... */
 			

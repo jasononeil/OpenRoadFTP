@@ -225,7 +225,7 @@ class Api
 		var ftpFileList = new FtpFileList(ftp,path);
 		
 		tpl.loadTemplateFromFile('./tpl/dirList.hxtpl');
-		
+
 		// ([^\/]+) means anything except a slash, at least one character. The () group it for capturing
 		// \/$    means a forward slash (/) at the end of the line
 		var onlyLastName:EReg = ~/([^\/]+)\/$/;

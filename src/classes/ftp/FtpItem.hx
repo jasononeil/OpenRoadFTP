@@ -174,11 +174,10 @@ class FtpItem
 		}
 	}
 	
-	/* I theorize that this static function is redundant - just use the constructor
-	/*static public function newFromLsLine(ftpConn_in, dirPath_in, lsResult_in)
+	static public function newFromLsLine(ftpConn_in, dirPath_in, lsResult_in)
 	{
 		var item = new FtpItem(ftpConn_in, dirPath_in, lsResult_in);
 		item.appendNameToPath();
 		return item;
-	}*/
+	}
 }

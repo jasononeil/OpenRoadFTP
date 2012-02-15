@@ -8,10 +8,12 @@ class FtpFileList
 	public var dirs:Hash<FtpItem>;
 	public var files:Hash<FtpItem>;
 	public var links:Hash<FtpItem>;
+	public var all:Hash<FtpItem>;
 	public var numDirs(countDirs,null):Int;
 	public var numFiles(countFiles,null):Int;
 	public var numLinks(countLinks,null):Int;
 	
+	static var t = 0;
 	public function new(cnx:FtpConnection, path:String)
 	{
 		dirs = new Hash();
@@ -21,20 +23,20 @@ class FtpFileList
 		var lsResult:Array<String> = cnx.ls(path);
 		for (line in lsResult)
 		{
-			var file = new FtpItem(cnx,path,line);
+			var file = FtpItem.newFromLsLine(cnx,path,line);
 			if (file.type == FtpFileType.link)
 			{
-				links.set(path,file);
+				links.set(file.path,file);
 			}
 			else if (file.type == FtpFileType.dir)
 			{
-				dirs.set(path,file);
+				dirs.set(file.path,file);
 			}
 			else if (file.type == FtpFileType.file)
 			{
-				dirs.set(path,file);
+				files.set(file.path,file);
 			}
-			
+			t++;
 		}
 	}
 	
