@@ -15,7 +15,6 @@ class AjaxClient
 		url = "api.php";
 		cnx = HttpAsyncConnection.urlConnect(url);
 		proxy = untyped new ApiProxy(cnx.api);
-		
 	}
 	
 }
