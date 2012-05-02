@@ -789,7 +789,7 @@ var interface =
 				});
 				break;
 			default:
-			alert (err);
+				console.log(err);
 		}
 	}
 };

@@ -41,7 +41,15 @@ class FtpConnection
 		else
 		{
 			// Server is up! Try login
-			var loginOkay:Bool = untyped __call__("ftp_login", conn, username, password);
+			var loginOkay = false;
+			try {
+				loginOkay = untyped __call__("ftp_login", conn, username, password);
+			} 
+			catch (e:Dynamic)
+			{
+				loginOkay = false;
+			}
+			
 			if (loginOkay == false)
 			{
 				throw new Error("FTP.BAD_LOGIN");
