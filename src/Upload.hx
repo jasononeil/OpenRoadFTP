@@ -43,7 +43,7 @@ class Upload
 		}
 		catch(e:Dynamic)
 		{
-			php.Lib.print("error");
+			php.Lib.print("error: " + e);
 		}
 		
 	}

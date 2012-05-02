@@ -1,4 +1,4 @@
-/php/*
+/php/lib/AppConfig.class.php
 /src/AppConfig.hx
 .*~
 *.sublime-*

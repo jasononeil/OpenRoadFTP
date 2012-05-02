@@ -1,0 +1,29 @@
+<html>
+<head>
+	<title>{site.title}</title>
+	<link rel="stylesheet" type="text/css" href="css/screen.css" />
+	<script type="text/javascript" src="js/scripts.php"> </script>
+	<script type="text/javascript">/**nothing**/</script>
+</head>
+<body>
+	
+	
+	<div id="container">
+		<h1>{site.title}</h1>
+		<ul id="breadcrumbs">
+			<li>Home</li>
+		</ul>
+		<div id="content">
+			<!-- Content not loaded yet. -->  
+		</div>
+		<ul id="bottomtoolbar">
+			<li id="logout">Sign Out</li>
+		</ul>
+	</div>
+	
+	<div id="copyright">
+		{site.copyright}
+	</div>
+	
+</body>
+</html>

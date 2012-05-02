@@ -1,0 +1,14 @@
+<div id="loginform">
+<h3>{message}</h3>
+<hxSwitch name="explanation"><p>{explanation}</p></hxSwitch>
+<hxSwitch name="suggestion"><p>{suggestion}</p></hxSwitch>
+<form>
+	<label for="loginform-username">Username</label>
+	<label for="loginform-password">Password</label>
+	<br />
+	<input type="text" name="username" id="loginform-username" />
+	<input type="password" name="password" id="loginform-password" />
+	<div id="loginform-submit">Sign In</div>
+	<input type="submit" style="display: none" />
+</form>
+</div>
