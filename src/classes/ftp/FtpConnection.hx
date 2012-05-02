@@ -179,13 +179,22 @@ class FtpConnection
 			while (exists(newPathOnFtpServer)) {
 				if (folder == null || name == null || extension == null)
 				{
-					var onlyLastName = ~/([^\/]+)\$/;
+					var onlyLastName = ~/([^\/]+)$/;
 					onlyLastName.match(newPathOnFtpServer);
 					folder = onlyLastName.replace(newPathOnFtpServer, "");
 					var nameAndExtension = onlyLastName.matched(0);
-					var anythingBeforeADot = ~/^([^.]*)$/;
-					anythingBeforeADot.match(nameAndExtension);
-					name = anythingBeforeADot.replace(nameAndExtension, "");
+					if (nameAndExtension.indexOf('.') > -1)
+					{
+						var anythingBeforeADot = ~/^([^.]*)/;
+						anythingBeforeADot.match(nameAndExtension);
+						name = anythingBeforeADot.matched(1);
+						extension = anythingBeforeADot.replace(nameAndExtension, "");
+					}
+					else 
+					{
+						name = nameAndExtension;
+						extension = "";
+					}
 				}
 				number++;
 				newPathOnFtpServer = folder + name + " (" + number + ")" + extension;
@@ -264,7 +273,7 @@ class FtpConnection
 		var ftpPath = sanitizePath(ftpPath_in);
 		var cwd = php.Sys.getCwd();
 		webServerPath = cwd + "/" + tmpDir + ftpPath;
-		var onlyLastName = ~/([^\/]+)\$/;
+		var onlyLastName = ~/([^\/]+)$/;
 		var webServerDir = onlyLastName.replace(webServerPath,"");
 		createWebServerDir(webServerDir); // will only create if it doesn't exist already
 		var serverMode = untyped __php__("FTP_BINARY");
@@ -281,10 +290,11 @@ class FtpConnection
 		var serverMode = untyped __php__("FTP_BINARY");
 		var didUploadWork = false;
 		var didChdirWork = false;
-		var onlyLastName = ~/([^\/]+)\$/;
+		var onlyLastName = ~/([^\/]+)$/;
 		onlyLastName.match(newPathOnFtpServer);
 		folderToPasteIn = onlyLastName.replace(newPathOnFtpServer,"");
 		fileToPasteAs = onlyLastName.matched(0);
+
 		didChdirWork = untyped __call__('ftp_chdir',conn,folderToPasteIn);
 		if (didChdirWork) 
 		{

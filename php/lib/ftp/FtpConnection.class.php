@@ -145,14 +145,21 @@ class ftp_FtpConnection {
 			$number = 1;
 			while($this->exists($newPathOnFtpServer)) {
 				if($folder === null || $name === null || $extension === null) {
-					$onlyLastName = new EReg("([^/]+)\\\$", "");
+					$onlyLastName = new EReg("([^/]+)\$", "");
 					$onlyLastName->match($newPathOnFtpServer);
 					$folder = $onlyLastName->replace($newPathOnFtpServer, "");
 					$nameAndExtension = $onlyLastName->matched(0);
-					$anythingBeforeADot = new EReg("^([^.]*)\$", "");
-					$anythingBeforeADot->match($nameAndExtension);
-					$name = $anythingBeforeADot->replace($nameAndExtension, "");
-					unset($onlyLastName,$nameAndExtension,$anythingBeforeADot);
+					if(_hx_index_of($nameAndExtension, ".", null) > -1) {
+						$anythingBeforeADot = new EReg("^([^.]*)", "");
+						$anythingBeforeADot->match($nameAndExtension);
+						$name = $anythingBeforeADot->matched(1);
+						$extension = $anythingBeforeADot->replace($nameAndExtension, "");
+						unset($anythingBeforeADot);
+					} else {
+						$name = $nameAndExtension;
+						$extension = "";
+					}
+					unset($onlyLastName,$nameAndExtension);
 				}
 				$number++;
 				$newPathOnFtpServer = $folder . $name . " (" . $number . ")" . $extension;
@@ -163,7 +170,7 @@ class ftp_FtpConnection {
 			$_ex_ = ($»e instanceof HException) ? $»e->e : $»e;
 			$e2 = $_ex_;
 			{
-				throw new HException(new hxbase_util_Error("FTP.COPY_WRITE_FAILED", _hx_anonymous(array("fileName" => "FtpConnection.hx", "lineNumber" => 196, "className" => "ftp.FtpConnection", "methodName" => "copy"))));
+				throw new HException(new hxbase_util_Error("FTP.COPY_WRITE_FAILED", _hx_anonymous(array("fileName" => "FtpConnection.hx", "lineNumber" => 205, "className" => "ftp.FtpConnection", "methodName" => "copy"))));
 			}
 		}
 	}
@@ -172,7 +179,7 @@ class ftp_FtpConnection {
 		$path = $this->sanitizePath($path_in);
 		$didDeleteWork = ftp_delete($this->conn, $path);
 		if(!$didDeleteWork) {
-			throw new HException(new hxbase_util_Error("FTP.DELETE_FILE_FAILED", _hx_anonymous(array("fileName" => "FtpConnection.hx", "lineNumber" => 205, "className" => "ftp.FtpConnection", "methodName" => "deleteFile"))));
+			throw new HException(new hxbase_util_Error("FTP.DELETE_FILE_FAILED", _hx_anonymous(array("fileName" => "FtpConnection.hx", "lineNumber" => 214, "className" => "ftp.FtpConnection", "methodName" => "deleteFile"))));
 		}
 	}
 	public function deleteDirectory($path_in) {
@@ -193,7 +200,7 @@ class ftp_FtpConnection {
 		}
 		$didDeleteWork = ftp_rmdir($this->conn, $path);
 		if(!$didDeleteWork) {
-			throw new HException(new hxbase_util_Error("FTP.DELETE_DIR_FAILED", _hx_anonymous(array("fileName" => "FtpConnection.hx", "lineNumber" => 222, "className" => "ftp.FtpConnection", "methodName" => "deleteDirectory"))));
+			throw new HException(new hxbase_util_Error("FTP.DELETE_DIR_FAILED", _hx_anonymous(array("fileName" => "FtpConnection.hx", "lineNumber" => 231, "className" => "ftp.FtpConnection", "methodName" => "deleteDirectory"))));
 		}
 	}
 	public function mkdir($path_in) {
@@ -201,7 +208,7 @@ class ftp_FtpConnection {
 		$path = $this->sanitizePath($path_in);
 		$didMakeDirWork = ftp_mkdir($this->conn, $path);
 		if(!$didMakeDirWork) {
-			throw new HException(new hxbase_util_Error("FTP.MAKE_DIR_FAILED", _hx_anonymous(array("fileName" => "FtpConnection.hx", "lineNumber" => 230, "className" => "ftp.FtpConnection", "methodName" => "mkdir"))));
+			throw new HException(new hxbase_util_Error("FTP.MAKE_DIR_FAILED", _hx_anonymous(array("fileName" => "FtpConnection.hx", "lineNumber" => 239, "className" => "ftp.FtpConnection", "methodName" => "mkdir"))));
 		}
 	}
 	public function createWebServerDir($webServerDir) {
@@ -220,7 +227,7 @@ class ftp_FtpConnection {
 							$_ex_ = ($»e instanceof HException) ? $»e->e : $»e;
 							$e = $_ex_;
 							{
-								throw new HException(new hxbase_util_Error("FTP.CREATE_TMP_DIR_FAILED", _hx_anonymous(array("fileName" => "FtpConnection.hx", "lineNumber" => 252, "className" => "ftp.FtpConnection", "methodName" => "createWebServerDir"))));
+								throw new HException(new hxbase_util_Error("FTP.CREATE_TMP_DIR_FAILED", _hx_anonymous(array("fileName" => "FtpConnection.hx", "lineNumber" => 261, "className" => "ftp.FtpConnection", "methodName" => "createWebServerDir"))));
 							}
 						}
 						unset($e);
@@ -237,13 +244,13 @@ class ftp_FtpConnection {
 		$ftpPath = $this->sanitizePath($ftpPath_in);
 		$cwd = php_Sys::getCwd();
 		$webServerPath = $cwd . "/" . $this->tmpDir . $ftpPath;
-		$onlyLastName = new EReg("([^/]+)\\\$", "");
+		$onlyLastName = new EReg("([^/]+)\$", "");
 		$webServerDir = $onlyLastName->replace($webServerPath, "");
 		$this->createWebServerDir($webServerDir);
 		$serverMode = FTP_BINARY;
 		$didDownloadWork = ftp_get($this->conn, $webServerPath, $ftpPath, $serverMode);
 		if(!$didDownloadWork) {
-			throw new HException(new hxbase_util_Error("FTP.DOWNLOAD_FAILED", _hx_anonymous(array("fileName" => "FtpConnection.hx", "lineNumber" => 272, "className" => "ftp.FtpConnection", "methodName" => "downloadFile"))));
+			throw new HException(new hxbase_util_Error("FTP.DOWNLOAD_FAILED", _hx_anonymous(array("fileName" => "FtpConnection.hx", "lineNumber" => 281, "className" => "ftp.FtpConnection", "methodName" => "downloadFile"))));
 		}
 		return $webServerPath;
 	}
@@ -254,7 +261,7 @@ class ftp_FtpConnection {
 		$serverMode = FTP_BINARY;
 		$didUploadWork = false;
 		$didChdirWork = false;
-		$onlyLastName = new EReg("([^/]+)\\\$", "");
+		$onlyLastName = new EReg("([^/]+)\$", "");
 		$onlyLastName->match($newPathOnFtpServer);
 		$folderToPasteIn = $onlyLastName->replace($newPathOnFtpServer, "");
 		$fileToPasteAs = $onlyLastName->matched(0);
@@ -265,7 +272,7 @@ class ftp_FtpConnection {
 			throw new HException("HERE!");
 		}
 		if(!$didUploadWork) {
-			throw new HException(new hxbase_util_Error("FTP.UPLOAD_FAILED", _hx_anonymous(array("fileName" => "FtpConnection.hx", "lineNumber" => 299, "className" => "ftp.FtpConnection", "methodName" => "uploadFile"))));
+			throw new HException(new hxbase_util_Error("FTP.UPLOAD_FAILED", _hx_anonymous(array("fileName" => "FtpConnection.hx", "lineNumber" => 309, "className" => "ftp.FtpConnection", "methodName" => "uploadFile"))));
 		}
 	}
 	public function sanitizePath($path_in) {
