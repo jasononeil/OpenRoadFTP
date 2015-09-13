@@ -1,7 +1,7 @@
 <?php
 
 class ftp_FtpItem {
-	public function __construct($ftpConn_in, $path_in, $lsResult_in) {
+	public function __construct($ftpConn_in, $path_in, $lsResult_in = null) {
 		if(!php_Boot::$skip_constructor) {
 		hxbase_Log::assert($ftpConn_in !== null, "ftpConn_in must not be null", _hx_anonymous(array("fileName" => "FtpItem.hx", "lineNumber" => 24, "className" => "ftp.FtpItem", "methodName" => "new")));
 		hxbase_Log::assert($path_in !== null, "path_in must not be null", _hx_anonymous(array("fileName" => "FtpItem.hx", "lineNumber" => 25, "className" => "ftp.FtpItem", "methodName" => "new")));
@@ -51,14 +51,12 @@ class ftp_FtpItem {
 		return $this->ftpConn->downloadFile($this->path);
 	}
 	public function delete() {
-		$»t = ($this->type);
-		switch($»t->index) {
-		case 0:
-		{
+		$_g = $this->type;
+		switch($_g->index) {
+		case 0:{
 			$this->ftpConn->deleteDirectory($this->path);
 		}break;
-		case 1:
-		{
+		case 1:{
 			$this->ftpConn->deleteFile($this->path);
 		}break;
 		default:{
@@ -66,9 +64,9 @@ class ftp_FtpItem {
 		}
 	}
 	public function appendNameToPath() {
-		$this->path = $this->path . $this->name;
-		if($this->type == ftp_FtpFileType::$dir) {
-			$this->path = $this->path . "/";
+		$this->path = _hx_string_or_null($this->path) . _hx_string_or_null($this->name);
+		if((is_object($_t = $this->type) && !($_t instanceof Enum) ? $_t === ftp_FtpFileType::$dir : $_t == ftp_FtpFileType::$dir)) {
+			$this->path = _hx_string_or_null($this->path) . "/";
 		}
 	}
 	public function toString() {
@@ -79,7 +77,23 @@ class ftp_FtpItem {
 		$whitespace = new EReg("\\s+", "g");
 		$arr = $whitespace->split($this->lsResult);
 		$raw_typeAndPermissions = $arr->shift();
-		$this->type = ftp_FtpItem_0($this, $arr, $raw_typeAndPermissions, $whitespace);
+		{
+			$_g = _hx_char_at($raw_typeAndPermissions, 0);
+			switch($_g) {
+			case "-":{
+				$this->type = ftp_FtpFileType::$file;
+			}break;
+			case "d":{
+				$this->type = ftp_FtpFileType::$dir;
+			}break;
+			case "l":{
+				$this->type = ftp_FtpFileType::$link;
+			}break;
+			default:{
+				$this->type = ftp_FtpFileType::$unknown;
+			}break;
+			}
+		}
 		$raw_numDirOrLinksInside = $arr->shift();
 		$raw_owner = $arr->shift();
 		$this->owner = $raw_owner;
@@ -91,7 +105,7 @@ class ftp_FtpItem {
 		$raw_day = $arr->shift();
 		$raw_timeOrYear = $arr->shift();
 		$day = Std::parseInt($raw_day);
-		$month = intval(_hx_index_of("Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec", $raw_month, null) / 4);
+		$month = Std::int(_hx_index_of("Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec", $raw_month, null) / 4);
 		$isTimeNotYear = _hx_index_of($raw_timeOrYear, ":", null) !== null;
 		$hours = 0;
 		$minutes = 0;
@@ -118,7 +132,7 @@ class ftp_FtpItem {
 		$first8blocks = new EReg("(\\S+\\s+){8}", "");
 		$leftOverName = $first8blocks->replace($this->lsResult, "");
 		$this->name = $leftOverName;
-		if($this->type == ftp_FtpFileType::$link) {
+		if((is_object($_t = $this->type) && !($_t instanceof Enum) ? $_t === ftp_FtpFileType::$link : $_t == ftp_FtpFileType::$link)) {
 			$arr1 = _hx_explode(" -> ", $this->name);
 			$this->name = $arr1[0];
 			$this->target = $arr1[1];
@@ -127,12 +141,12 @@ class ftp_FtpItem {
 	public function __call($m, $a) {
 		if(isset($this->$m) && is_callable($this->$m))
 			return call_user_func_array($this->$m, $a);
-		else if(isset($this->»dynamics[$m]) && is_callable($this->»dynamics[$m]))
-			return call_user_func_array($this->»dynamics[$m], $a);
+		else if(isset($this->__dynamics[$m]) && is_callable($this->__dynamics[$m]))
+			return call_user_func_array($this->__dynamics[$m], $a);
 		else if('toString' == $m)
 			return $this->__toString();
 		else
-			throw new HException('Unable to call «'.$m.'»');
+			throw new HException('Unable to call <'.$m.'>');
 	}
 	static function newFromLsLine($ftpConn_in, $dirPath_in, $lsResult_in) {
 		$item = new ftp_FtpItem($ftpConn_in, $dirPath_in, $lsResult_in);
@@ -140,20 +154,4 @@ class ftp_FtpItem {
 		return $item;
 	}
 	function __toString() { return $this->toString(); }
-}
-function ftp_FtpItem_0(&$»this, &$arr, &$raw_typeAndPermissions, &$whitespace) {
-	switch(_hx_char_at($raw_typeAndPermissions, 0)) {
-	case "-":{
-		return ftp_FtpFileType::$file;
-	}break;
-	case "d":{
-		return ftp_FtpFileType::$dir;
-	}break;
-	case "l":{
-		return ftp_FtpFileType::$link;
-	}break;
-	default:{
-		return ftp_FtpFileType::$unknown;
-	}break;
-	}
 }

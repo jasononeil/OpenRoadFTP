@@ -1,7 +1,7 @@
 <?php
 
 class ftp_FtpConnection {
-	public function __construct($server_in, $user_in, $pass_in, $tmpDir_in, $fakeRoot_in, $port_in, $timeout_in) {
+	public function __construct($server_in, $user_in, $pass_in, $tmpDir_in, $fakeRoot_in = null, $port_in = null, $timeout_in = null) {
 		if(!php_Boot::$skip_constructor) {
 		if($timeout_in === null) {
 			$timeout_in = 90;
@@ -28,8 +28,8 @@ class ftp_FtpConnection {
 			$loginOkay = false;
 			try {
 				$loginOkay = ftp_login($this->conn, $this->username, $this->password);
-			}catch(Exception $»e) {
-				$_ex_ = ($»e instanceof HException) ? $»e->e : $»e;
+			}catch(Exception $__hx__e) {
+				$_ex_ = ($__hx__e instanceof HException) ? $__hx__e->e : $__hx__e;
 				$e = $_ex_;
 				{
 					$loginOkay = false;
@@ -39,7 +39,6 @@ class ftp_FtpConnection {
 				throw new HException(new hxbase_util_Error("FTP.BAD_LOGIN", _hx_anonymous(array("fileName" => "FtpConnection.hx", "lineNumber" => 55, "className" => "ftp.FtpConnection", "methodName" => "new"))));
 			}
 		}
-		return true;
 	}}
 	public $server;
 	public $username;
@@ -65,11 +64,11 @@ class ftp_FtpConnection {
 		$path = $this->sanitizePath($path_in);
 		try {
 			$result = ftp_chdir($this->conn, $path);
-		}catch(Exception $»e) {
-			$_ex_ = ($»e instanceof HException) ? $»e->e : $»e;
+		}catch(Exception $__hx__e) {
+			$_ex_ = ($__hx__e instanceof HException) ? $__hx__e->e : $__hx__e;
 			if(is_string($e = $_ex_)){
 				$result = false;
-			} else throw $»e;;
+			} else throw $__hx__e;;
 		}
 		return $result;
 	}
@@ -77,7 +76,11 @@ class ftp_FtpConnection {
 		$path = $this->sanitizePath($path_in);
 		$filesize = null;
 		$filesize = ftp_size($this->conn, $path);
-		return (($filesize === -1) ? false : true);
+		if($filesize === -1) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 	public function exists($path_in) {
 		$path = $this->sanitizePath($path_in);
@@ -89,7 +92,7 @@ class ftp_FtpConnection {
 	public function getDirAt($path) {
 		return new ftp_FtpDir($this, $path);
 	}
-	public function ls($path_in, $recursive) {
+	public function ls($path_in = null, $recursive = null) {
 		if($recursive === null) {
 			$recursive = false;
 		}
@@ -101,7 +104,12 @@ class ftp_FtpConnection {
 		$na = null;
 		$path = $this->sanitizePath($path_in);
 		$finalChar = _hx_char_at($path, strlen($path) - 1);
-		$weAreListingChildren = (($finalChar === "/") ? true : false);
+		$weAreListingChildren = null;
+		if($finalChar === "/") {
+			$weAreListingChildren = true;
+		} else {
+			$weAreListingChildren = false;
+		}
 		$weAreGettingDirInfo = false;
 		if($weAreListingChildren === false) {
 			$weAreGettingDirInfo = $this->isDir($path);
@@ -111,7 +119,12 @@ class ftp_FtpConnection {
 			$a = new _hx_array($na);
 		} else {
 			$onlyLastName = new EReg("([^/]+)\\\$", "");
-			$name = (($onlyLastName->match($path)) ? $onlyLastName->matched(0) : null);
+			$name = null;
+			if($onlyLastName->match($path)) {
+				$name = $onlyLastName->matched(0);
+			} else {
+				$name = null;
+			}
 			$parentPath = $onlyLastName->replace($path, "");
 			$na = ftp_rawlist($this->conn, $parentPath, $recursive);
 			$a = new _hx_array($na);
@@ -139,8 +152,8 @@ class ftp_FtpConnection {
 		$tmpPathOnWebServer = null;
 		try {
 			$tmpPathOnWebServer = $this->downloadFile($path_in);
-		}catch(Exception $»e) {
-			$_ex_ = ($»e instanceof HException) ? $»e->e : $»e;
+		}catch(Exception $__hx__e) {
+			$_ex_ = ($__hx__e instanceof HException) ? $__hx__e->e : $__hx__e;
 			$e = $_ex_;
 			{
 				throw new HException(new hxbase_util_Error("FTP.COPY_READ_FAILED", _hx_anonymous(array("fileName" => "FtpConnection.hx", "lineNumber" => 176, "className" => "ftp.FtpConnection", "methodName" => "copy"))));
@@ -171,13 +184,13 @@ class ftp_FtpConnection {
 					unset($onlyLastName,$nameAndExtension);
 				}
 				$number++;
-				$newPathOnFtpServer = $folder . $name . " (" . $number . ")" . $extension;
+				$newPathOnFtpServer = _hx_string_or_null($folder) . _hx_string_or_null($name) . " (" . _hx_string_rec($number, "") . ")" . _hx_string_or_null($extension);
 			}
 			$this->uploadFile($tmpPathOnWebServer, $newPathOnFtpServer);
 			@unlink($tmpPathOnWebServer);
-		}catch(Exception $»e) {
-			$_ex_ = ($»e instanceof HException) ? $»e->e : $»e;
-			$e2 = $_ex_;
+		}catch(Exception $__hx__e) {
+			$_ex_ = ($__hx__e instanceof HException) ? $__hx__e->e : $__hx__e;
+			$e1 = $_ex_;
 			{
 				throw new HException(new hxbase_util_Error("FTP.COPY_WRITE_FAILED", _hx_anonymous(array("fileName" => "FtpConnection.hx", "lineNumber" => 213, "className" => "ftp.FtpConnection", "methodName" => "copy"))));
 			}
@@ -194,17 +207,17 @@ class ftp_FtpConnection {
 	public function deleteDirectory($path_in) {
 		$didDeleteWork = null;
 		$path = $this->sanitizePath($path_in);
-		$fileList = new ftp_FtpFileList($this, $path . "/");
+		$fileList = new ftp_FtpFileList($this, _hx_string_or_null($path) . "/");
 		if(null == $fileList->dirs) throw new HException('null iterable');
-		$»it = $fileList->dirs->iterator();
-		while($»it->hasNext()) {
-			$ftpDir = $»it->next();
+		$__hx__it = $fileList->dirs->iterator();
+		while($__hx__it->hasNext()) {
+			$ftpDir = $__hx__it->next();
 			$this->deleteDirectory($ftpDir->path);
 		}
 		if(null == $fileList->files) throw new HException('null iterable');
-		$»it = $fileList->files->iterator();
-		while($»it->hasNext()) {
-			$ftpItem = $»it->next();
+		$__hx__it = $fileList->files->iterator();
+		while($__hx__it->hasNext()) {
+			$ftpItem = $__hx__it->next();
 			$this->deleteFile($ftpItem->path);
 		}
 		$didDeleteWork = ftp_rmdir($this->conn, $path);
@@ -227,13 +240,36 @@ class ftp_FtpConnection {
 			while($dirParts->length > 0) {
 				$dirName = $dirParts->shift();
 				if($dirName !== "") {
-					$fullPath = $fullPath . "/" . $dirName;
+					$fullPath = _hx_string_or_null($fullPath) . "/" . _hx_string_or_null($dirName);
 					$webServerDirExists = file_exists($fullPath);
 					if($webServerDirExists === false) {
 						try {
-							@mkdir($fullPath, 493);
-						}catch(Exception $»e) {
-							$_ex_ = ($»e instanceof HException) ? $»e->e : $»e;
+							$path = haxe_io_Path::addTrailingSlash($fullPath);
+							$parts = null;
+							{
+								$_g = (new _hx_array(array()));
+								while(($path = haxe_io_Path::directory($path)) !== "") {
+									$_g->push($path);
+								}
+								$parts = $_g;
+								unset($_g);
+							}
+							$parts->reverse();
+							{
+								$_g1 = 0;
+								while($_g1 < $parts->length) {
+									$part = $parts[$_g1];
+									++$_g1;
+									if(_hx_char_code_at($part, strlen($part) - 1) !== 58 && !file_exists($part)) {
+										@mkdir($part, 493);
+									}
+									unset($part);
+								}
+								unset($_g1);
+							}
+							unset($path,$parts);
+						}catch(Exception $__hx__e) {
+							$_ex_ = ($__hx__e instanceof HException) ? $__hx__e->e : $__hx__e;
 							$e = $_ex_;
 							{
 								throw new HException(new hxbase_util_Error("FTP.CREATE_TMP_DIR_FAILED", _hx_anonymous(array("fileName" => "FtpConnection.hx", "lineNumber" => 269, "className" => "ftp.FtpConnection", "methodName" => "createWebServerDir"))));
@@ -251,8 +287,8 @@ class ftp_FtpConnection {
 		$webServerPath = "";
 		$didDownloadWork = null;
 		$ftpPath = $this->sanitizePath($ftpPath_in);
-		$cwd = php_Sys::getCwd();
-		$webServerPath = $cwd . "/" . $this->tmpDir . $ftpPath;
+		$cwd = Sys::getCwd();
+		$webServerPath = _hx_string_or_null($cwd) . "/" . _hx_string_or_null($this->tmpDir) . _hx_string_or_null($ftpPath);
 		$onlyLastName = new EReg("([^/]+)\$", "");
 		$webServerDir = $onlyLastName->replace($webServerPath, "");
 		$this->createWebServerDir($webServerDir);
@@ -285,7 +321,12 @@ class ftp_FtpConnection {
 		}
 	}
 	public function sanitizePath($path_in) {
-		$path = ftp_FtpConnection_1($this, $path_in);
+		$path = null;
+		if(_hx_substr($path_in, 0, strlen($this->fakeRoot)) === $this->fakeRoot) {
+			$path = $path_in;
+		} else {
+			$path = _hx_string_or_null($this->fakeRoot) . _hx_string_or_null($path_in);
+		}
 		$slashMultipleDotsSlash = new EReg("[/\\\\]\\.{2,}[/\\\\]", "");
 		$path = $slashMultipleDotsSlash->replace($path, "/");
 		return $path;
@@ -293,12 +334,12 @@ class ftp_FtpConnection {
 	public function __call($m, $a) {
 		if(isset($this->$m) && is_callable($this->$m))
 			return call_user_func_array($this->$m, $a);
-		else if(isset($this->»dynamics[$m]) && is_callable($this->»dynamics[$m]))
-			return call_user_func_array($this->»dynamics[$m], $a);
+		else if(isset($this->__dynamics[$m]) && is_callable($this->__dynamics[$m]))
+			return call_user_func_array($this->__dynamics[$m], $a);
 		else if('toString' == $m)
 			return $this->__toString();
 		else
-			throw new HException('Unable to call «'.$m.'»');
+			throw new HException('Unable to call <'.$m.'>');
 	}
 	function __toString() { return 'ftp.FtpConnection'; }
 }
@@ -310,12 +351,5 @@ function ftp_FtpConnection_0(&$a, &$finalChar, &$na, &$name, &$onlyLastName, &$p
 			$leftOverName = _hx_array_get(_hx_explode(" -> ", $leftOverName), 0);
 		}
 		return $name === $leftOverName;
-	}
-}
-function ftp_FtpConnection_1(&$»this, &$path_in) {
-	if(_hx_substr($path_in, 0, strlen($»this->fakeRoot)) === $»this->fakeRoot) {
-		return $path_in;
-	} else {
-		return $»this->fakeRoot . $path_in;
 	}
 }

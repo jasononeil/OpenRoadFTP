@@ -46,18 +46,18 @@ class XmlNode
 	// Public variables
 	
 	/** A reference to the internal Xml object we're using.  (Read Only) */
-	public var xml(getter_xml,null):Xml;
+	public var xml(get,null):Xml;
 	
 	/** A reference to the internal Fast object we're using.  (Read Only) */
-	public var fast(getter_fast,null):Fast;
+	public var fast(get,null):Fast;
 	
 	/** The name of the current Element node.  
 	  If the node is not an Element, then this will return the node type.*/
-	public var name(getter_name,setter_name):String;
+	public var name(get,set):String;
 	
 	/** The value of the current node.  
 	  Does not work on Document or Element nodes.  */
-	public var value(getter_value,setter_value):String;
+	public var value(get,set):String;
 	
 	
 	/**
@@ -66,54 +66,54 @@ class XmlNode
 	  
 	  Will be one of Cdata, PCData, Prolog, DocType, Document, Comment or Element
 	*/
-	public var type(getter_type,null):XmlType;
+	public var type(get,null):XmlType;
 		/**
 		  Variable: isCData
 		  (Bool) Is this a CData node?
 		*/
-		public var isCData(testIsCData,null):Bool;
+		public var isCData(get,null):Bool;
 		
 		/**
 		  Variable: isPCData
 		  (Bool) Is this a PCData node?
 		*/
-		public var isPCData(testIsPCData,null):Bool;
+		public var isPCData(get,null):Bool;
 		
 		/**
 		  Variable: isProlog
 		  (Bool) Is this a Prolog node?
 		*/
-		public var isProlog(testIsProlog,null):Bool;
+		//public var isProlog(get,null):Bool;
 		
 		/**
 		  Variable: isDocType
 		  (Bool) Is this a DocType node?
 		*/
-		public var isDocType(testIsDocType,null):Bool;
+		public var isDocType(get,null):Bool;
 		
 		/**
 		  Variable: isDocument
 		  (Bool) Is this a Document node?
 		*/
-		public var isDocument(testIsDocument,null):Bool;
+		public var isDocument(get,null):Bool;
 		
 		/**
 		  Variable: isComment
 		  (Bool) Is this a Comment node?
 		*/
-		public var isComment(testIsComment,null):Bool;
+		public var isComment(get,null):Bool;
 		
 		/**
 		  Variable: isElement
 		  (Bool) Is this a Element node?
 		*/
-		public var isElement(testIsElement,null):Bool;
+		public var isElement(get,null):Bool;
 		
 		/**
 		  Variable: isText
 		  (Bool) Is this a text node, that is, CData OR PCData?
 		*/
-		public var isText(testIsText,null):Bool;
+		public var isText(get,null):Bool;
 	
 	/**
 	  Variable: index
@@ -124,7 +124,7 @@ class XmlNode
 	  
 	  Returns 0 if this object doesn't have a parent.
 	*/
-	public var index(getter_index,null):Int;
+	public var index(get,null):Int;
 	
 	/**
 	  Variable: numChildren
@@ -132,84 +132,84 @@ class XmlNode
 	  
 	  Returns 0 if this object isn't a parent.
 	*/
-	public var numChildren(getter_numChildren,null):Int;
+	public var numChildren(get, null):Int;
 	
 	/**
 	  Variable: parent
 	  (<XmlNode>) Shortcut for this.getParent(); (Read Only)
 	*/
-	public var parent(getter_parent,null):XmlNode;
+	public var parent(get, null):XmlNode;
 	
 	/**
 	Get's the root document node.  
 	(Not the document element, the node, which the element is contained in)
 	*/
-	public var document(getter_document,null):XmlNode;
+	public var document(get, null):XmlNode;
 	
 	/**
 	Shortcut for this.getDepthFromDocument().  Immediate childs of document node return 1, grandchildren 2, etc.
 	*/
-	public var depth(getter_depth,null):Int;
+	public var depth(get, null):Int;
 	
 	/**
 	  Variable: children
 	  (<XmlList>) Shortcut for this.getChildren(); (Read Only)
 	*/	
-	public var children(getter_children,null):XmlList;
+	public var children(get, null):XmlList;
 	
 	/**
 	  Variable: firstChild
 	  (<XmlNode>) Shortcut for this.getFirstChild(); (Read Only)
 	*/
-	public var firstChild(getter_firstChild,null):XmlNode;
+	public var firstChild(get, null):XmlNode;
 	
 	/**
 	  Variable: lastChild
 	  (<XmlNode>) Shortcut for this.getLastChild(); (Read Only)
 	*/
-	public var lastChild(getter_lastChild,null):XmlNode;
+	public var lastChild(get, null):XmlNode;
 	
 	/**
 	  Variable: ancestors
 	  (<XmlList>) Shortcut for this.getAncestors(); (Read Only)
 	*/
-	public var ancestors(getter_ancestors,null):XmlList;
+	public var ancestors(get, null):XmlList;
 	
 	/**
 	  Variable: descendants
 	  (<XmlList>) Shortcut for this.getDescendants(); (Read Only)
 	*/
-	public var descendants(getter_descendants,null):XmlList;
+	public var descendants(get, null):XmlList;
 	
 	/**
 	  Variable: siblings
 	  (<XmlList>) Shortcut for this.getSiblings(); (Read Only)
 	*/
-	public var siblings(getter_siblings,null):XmlList;
+	public var siblings(get, null):XmlList;
 	
 	/**
 	  Variable: next
 	  (<XmlNode>) Shortcut for this.getNext(); (Read Only)
 	*/
-	public var next(getter_next,null):XmlNode;
+	public var next(get, null):XmlNode;
 	
 	/**
 	  Variable: prev
 	  (<XmlNode>) Shortcut for this.getPrev(); (Read Only)
 	*/
-	public var prev(getter_prev,null):XmlNode;
+	public var prev(get, null):XmlNode;
 	
 	/**
 	  Variable: siblingsBefore
 	  (<XmlList>) Shortcut for this.getSiblingsBefore(); (Read Only)
 	*/
-	public var siblingsBefore(getter_siblingsBefore,null):XmlList; 
+	public var siblingsBefore(get, null):XmlList; 
 	
 	/**
 	  Variable: siblingsAfter
 	  (<XmlList>) Shortcut for this.getSiblingsAfter(); (Read Only)
 	*/
-	public var siblingsAfter(getter_siblingsAfter,null):XmlList;
+	public var siblingsAfter(get, null):XmlList;
 	
 	/**
 	  Variable: innerXML
@@ -225,7 +225,7 @@ class XmlNode
 	  > trace (xml);       		// "&lt;h1&gt;New &lt;i&gt;Title&lt;/i&gt;&lt;/h1&gt;"
 	  
 	*/
-	public var innerXML(getter_innerXml, setter_innerXml):String;
+	public var innerXML(get, set):String;
 	
 	/**
 	  Variable: outerXML
@@ -253,7 +253,7 @@ trace (xml);       	    	// "&lt;body&gt;&lt;header size='1'&gt;New Title&lt;/he
 	  I should set it up to latch on to the first child, but haven't done so yet.
 	  
 	*/
-	public var outerXML(getter_outerXml, setter_outerXml):String;
+	public var outerXML(get, set):String;
 	
 	/*
 	  Variable: innerText
@@ -272,7 +272,7 @@ trace (xml);       	    	// "&lt;body&gt;&lt;header size='1'&gt;New Title&lt;/he
 	  > trace (xml);       		// "<h1>New Title</h1>"
 	  
 	*/
-	public var innerText(getter_innerText, setter_innerXml):String;
+	public var innerText(get, set):String;
 	
 	// Private variables
 	var x:Xml;
@@ -1229,7 +1229,7 @@ trace (xml);       	    	// "&lt;body&gt;&lt;header size='1'&gt;New Title&lt;/he
 	//
 	//
 	
-	function getter_xml():Xml
+	function get_xml():Xml
 	{
 		// make sure this.x isn't null
 		this.x = (this.x != null) ? this.x : Xml.parse('<empty />'); 
@@ -1238,7 +1238,7 @@ trace (xml);       	    	// "&lt;body&gt;&lt;header size='1'&gt;New Title&lt;/he
 		return this.x;
 	}
 	
-	function getter_fast():Fast
+	function get_fast():Fast
 	{
 		// make sure this.f isn't null
 		this.f = (this.f != null) ? this.f : new Fast(this.xml);
@@ -1247,40 +1247,40 @@ trace (xml);       	    	// "&lt;body&gt;&lt;header size='1'&gt;New Title&lt;/he
 		return this.f;
 	}
 	
-	function getter_name():String
+	function get_name():String
 	{
 		return (this.isElement) ? this.xml.nodeName : "#" + Std.string(this.type);
 	}
 	
-	function setter_name(newName:String):String
+	function set_name(newName:String):String
 	{
 		this.xml.nodeName = newName;
 		return this.xml.nodeName;
 	}
 	
-	function getter_type():XmlType
+	function get_type():XmlType
 	{
 		return this.xml.nodeType;
 	}
 	
 		// very simple functions to test if it is a certain type
-		function testIsCData():Bool { return (this.xml.nodeType == Xml.CData); }
-		function testIsComment():Bool { return (this.xml.nodeType == Xml.Comment); }
-		function testIsDocType():Bool { return (this.xml.nodeType == Xml.DocType); }
-		function testIsDocument():Bool { return (this.xml.nodeType == Xml.Document); }
-		function testIsElement():Bool { return (this.xml.nodeType == Xml.Element); }
-		function testIsPCData():Bool { return (this.xml.nodeType == Xml.PCData); }
-		function testIsProlog():Bool { return (this.xml.nodeType == Xml.Prolog); }
-		function testIsText() { return (this.isCData || this.isPCData); }
+		function get_isCData():Bool { return (this.xml.nodeType == Xml.CData); }
+		function get_isComment():Bool { return (this.xml.nodeType == Xml.Comment); }
+		function get_isDocType():Bool { return (this.xml.nodeType == Xml.DocType); }
+		function get_isDocument():Bool { return (this.xml.nodeType == Xml.Document); }
+		function get_isElement():Bool { return (this.xml.nodeType == Xml.Element); }
+		function get_isPCData():Bool { return (this.xml.nodeType == Xml.PCData); }
+		//function get_isProlog():Bool { return (this.xml.nodeType == Xml.Prolog); }
+		function get_isText() { return (this.isCData || this.isPCData); }
 	
-	function getter_value():String
+	function get_value():String
 	{
 		var v:String;
 		v = (this.isElement || this.isDocument) ? "" : this.xml.nodeValue;
 		return v;
 	}
 	
-	function setter_value(v:String):String
+	function set_value(v:String):String
 	{
 		var returnVal = "";
 		
@@ -1293,72 +1293,72 @@ trace (xml);       	    	// "&lt;body&gt;&lt;header size='1'&gt;New Title&lt;/he
 		return returnVal;
 	}
 	
-	function getter_parent():XmlNode
+	function get_parent():XmlNode
 	{
 		return this.getParent();
 	}
 	
-	function getter_document():XmlNode
+	function get_document():XmlNode
 	{
 		return this.getDocument();
 	}
 	
-	function getter_depth():Int
+	function get_depth():Int
 	{
 		return this.getDepthFromDocument();
 	}
 	
-	function getter_children():XmlList
+	function get_children():XmlList
 	{
 		return this.getChildren();
 	}
 	
-	function getter_firstChild():XmlNode
+	function get_firstChild():XmlNode
 	{
 		return this.getFirstChild();
 	}
 	
-	function getter_lastChild():XmlNode
+	function get_lastChild():XmlNode
 	{
 		return this.getLastChild();
 	}
 	
-	function getter_ancestors():XmlList
+	function get_ancestors():XmlList
 	{
 		return this.getAncestors();
 	}
 	
-	function getter_descendants():XmlList
+	function get_descendants():XmlList
 	{
 		return this.getDescendants();
 	}
 	
-	function getter_siblings():XmlList
+	function get_siblings():XmlList
 	{
 		return this.getSiblings();
 	}
 	
-	function getter_next():XmlNode
+	function get_next():XmlNode
 	{
 		return this.getNext();
 	}
 	
-	function getter_prev():XmlNode
+	function get_prev():XmlNode
 	{
 		return this.getPrev();
 	}
 	
-	function getter_siblingsBefore():XmlList
+	function get_siblingsBefore():XmlList
 	{
 		return this.getSiblingsBefore();
 	}
 	
-	function getter_siblingsAfter():XmlList
+	function get_siblingsAfter():XmlList
 	{
 		return this.getSiblingsAfter();
 	}
 	
-	function getter_index():Int
+	function get_index():Int
 	{
 		// get parent -> get list of children -> getIndexOf(this)
 		var index:Int;
@@ -1373,17 +1373,22 @@ trace (xml);       	    	// "&lt;body&gt;&lt;header size='1'&gt;New Title&lt;/he
 		return index;
 	}
 	
-	function getter_numChildren():Int
+	function get_numChildren():Int
 	{
 		return Lambda.count(this.xml);	
 	}
 	
-	function getter_innerXml():String
+	function get_innerXML():String
 	{
 		return this.fast.innerHTML;
 	}
 	
-	function setter_innerXml(str:String):String
+	function set_innerText(str:String):String
+	{
+		return this.set_innerXML(str);
+	}
+
+	function set_innerXML(str:String):String
 	{
 		var newXml:XmlNode;
 		
@@ -1398,7 +1403,7 @@ trace (xml);       	    	// "&lt;body&gt;&lt;header size='1'&gt;New Title&lt;/he
 		return str;
 	}
 	
-	function getter_outerXml():String
+	function get_outerXML():String
 	{
 		return this.xml.toString(); 	
 	}
@@ -1410,7 +1415,7 @@ trace (xml);       	    	// "&lt;body&gt;&lt;header size='1'&gt;New Title&lt;/he
 	// This is because we don't know how many objects this will return, it might not even exist...
 	// 
 	//
-	function setter_outerXml(str:String):String
+	function set_outerXML(str:String):String
 	{
 		// Parse and create a new XmlNode object (whether it's a single element or many, it will be wrapped in a document node)
 		// newElement.addThisTo(this.parent, this.index);
@@ -1450,7 +1455,7 @@ trace (xml);       	    	// "&lt;body&gt;&lt;header size='1'&gt;New Title&lt;/he
 		return str;
 	}
 	
-	function getter_innerText():String
+	function get_innerText():String
 	{
 		var allDescendants:XmlList;
 		var textDescendants:XmlList;

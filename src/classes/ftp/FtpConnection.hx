@@ -55,7 +55,6 @@ class FtpConnection
 				throw new Error("FTP.BAD_LOGIN");
 			}
 		}
-		return true;
 	}
 	
 	public function registerErrorTypes()
@@ -208,7 +207,7 @@ class FtpConnection
 				newPathOnFtpServer = folder + name + " (" + number + ")" + extension;
 			}
 			uploadFile(tmpPathOnWebServer, newPathOnFtpServer);
-			php.FileSystem.deleteFile(tmpPathOnWebServer);
+			sys.FileSystem.deleteFile(tmpPathOnWebServer);
 		} catch (e:Dynamic) {
 			throw new Error ("FTP.COPY_WRITE_FAILED");
 		}
@@ -251,7 +250,7 @@ class FtpConnection
 	{
 		var dirParts = webServerDir.split('/');
 		var fullPath = "";
-		if (!php.FileSystem.exists(webServerDir))
+		if (!sys.FileSystem.exists(webServerDir))
 		{
 			while (dirParts.length > 0)
 			{
@@ -259,11 +258,11 @@ class FtpConnection
 				if (dirName != "")
 				{
 					fullPath = fullPath + "/" + dirName;
-					var webServerDirExists = php.FileSystem.exists(fullPath);
+					var webServerDirExists = sys.FileSystem.exists(fullPath);
 					if (webServerDirExists == false)
 					{
 						try {
-							php.FileSystem.createDirectory(fullPath);
+							sys.FileSystem.createDirectory(fullPath);
 						} catch (e:Dynamic)
 						{
 							throw new Error("FTP.CREATE_TMP_DIR_FAILED");
@@ -279,7 +278,7 @@ class FtpConnection
 		var webServerPath = "";
 		var didDownloadWork:Bool;
 		var ftpPath = sanitizePath(ftpPath_in);
-		var cwd = php.Sys.getCwd();
+		var cwd = Sys.getCwd();
 		webServerPath = cwd + "/" + tmpDir + ftpPath;
 		var onlyLastName = ~/([^\/]+)$/;
 		var webServerDir = onlyLastName.replace(webServerPath,"");

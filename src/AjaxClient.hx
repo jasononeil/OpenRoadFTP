@@ -4,6 +4,7 @@ import haxe.remoting.HttpAsyncConnection;
 class ApiProxy extends haxe.remoting.AsyncProxy<Api> { }
 
 // Now the main class we'll load, that in turn will load the proxy etc...
+@:expose
 class AjaxClient
 {
 	static var url:String;

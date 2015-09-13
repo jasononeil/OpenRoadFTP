@@ -36,8 +36,8 @@ class Upload
 			var params = php.Web.getParams();
 			var folder = (params.exists('path')) ? params.get('path') : '/';
 			
-			var localPath:String = untyped __php__('$_FILES["userfile"]["tmp_name"]');
-			var ftpPath:String = folder + untyped __php__('basename($_FILES["userfile"]["name"])');
+			var localPath:String = untyped __php__("$_FILES[\"userfile\"][\"tmp_name\"]");
+			var ftpPath:String = folder + untyped __php__("basename($_FILES[\"userfile\"][\"name\"])");
 			api.upload(localPath, ftpPath);
 			php.Lib.print("success");
 		}

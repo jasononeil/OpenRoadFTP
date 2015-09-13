@@ -24,16 +24,16 @@ class Download
 			{
 				// Okay, that's enough that we'll assume it's the right person for the right file.
 				var url = api.session.get('DOWNLOAD.url');
-				untyped __php__('
+				untyped __php__("
 				
-				header("Content-type: application/force-download");
-				header("Content-Transfer-Encoding: Binary"); 
-				header("Content-length: ".filesize($url));
-				header("Content-disposition: attachment;filename=\\"".basename($url)."\\""); 
+				header(\"Content-type: application/force-download\");
+				header(\"Content-Transfer-Encoding: Binary\"); 
+				header(\"Content-length: \".filesize($url));
+				header(\"Content-disposition: attachment;filename=\\\"\".basename($url).\"\\\"\"); 
 				readfile($url); 
 				unlink($url);
 				
-				');
+				");
 				
 			}
 		}

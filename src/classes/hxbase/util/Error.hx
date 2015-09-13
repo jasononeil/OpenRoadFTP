@@ -29,7 +29,7 @@ class Error
 		return code + ": " + error + "\n\n" + explanation + "\n\n" + suggestion;
 	}
 	
-	static var errorTypes:Hash<Dynamic> = new Hash();
+	static var errorTypes:Map<String, Dynamic> = new Map();
 	public static function registerErrorType(code_in,?error_in,?explanation_in,?suggestion_in)
 	{
 		if (suggestion_in == null) suggestion_in = "";

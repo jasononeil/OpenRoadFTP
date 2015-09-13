@@ -5,20 +5,20 @@ using Lambda;
 
 class FtpFileList
 {
-	public var dirs:Hash<FtpItem>;
-	public var files:Hash<FtpItem>;
-	public var links:Hash<FtpItem>;
-	public var all:Hash<FtpItem>;
-	public var numDirs(countDirs,null):Int;
-	public var numFiles(countFiles,null):Int;
-	public var numLinks(countLinks,null):Int;
+	public var dirs:Map<String, FtpItem>;
+	public var files:Map<String, FtpItem>;
+	public var links:Map<String, FtpItem>;
+	public var all:Map<String, FtpItem>;
+	public var numDirs(get,null):Int;
+	public var numFiles(get,null):Int;
+	public var numLinks(get,null):Int;
 	
 	static var t = 0;
 	public function new(cnx:FtpConnection, path:String)
 	{
-		dirs = new Hash();
-		files = new Hash();
-		links = new Hash();
+		dirs = new Map();
+		files = new Map();
+		links = new Map();
 		
 		var lsResult:Array<String> = cnx.ls(path);
 		for (line in lsResult)
@@ -40,17 +40,17 @@ class FtpFileList
 		}
 	}
 	
-	public function countDirs():Int
+	public function get_numDirs():Int
 	{
 		return dirs.count();
 	}
 	
-	public function countFiles():Int
+	public function get_numFiles():Int
 	{
 		return files.count();
 	}
 	
-	public function countLinks():Int
+	public function get_numLinks():Int
 	{
 		return links.count();
 	}

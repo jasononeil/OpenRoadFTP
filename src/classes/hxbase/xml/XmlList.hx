@@ -150,7 +150,7 @@ class XmlList extends List<XmlNode>
 			//
 			
 			#if php
-				untyped __php__("if($currentChild->getter_xml() === $childToSearchFor->getter_xml()) { $itemIndex = $i; }");
+				untyped __php__("if($currentChild->get_xml() === $childToSearchFor->get_xml()) { $itemIndex = $i; }");
 			#else
 				if (currentChild.xml == childToSearchFor.xml)
 				{

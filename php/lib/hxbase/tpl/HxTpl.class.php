@@ -3,11 +3,11 @@
 class hxbase_tpl_HxTpl {
 	public function __construct() {
 		if(!php_Boot::$skip_constructor) {
-		$this->assignedVariables = new Hash();
-		$this->blocks = new Hash();
-		$this->switches = new Hash();
-		$this->loopCount = new Hash();
-		$this->includeURLs = new Hash();
+		$this->assignedVariables = new haxe_ds_StringMap();
+		$this->blocks = new haxe_ds_StringMap();
+		$this->switches = new haxe_ds_StringMap();
+		$this->loopCount = new haxe_ds_StringMap();
+		$this->includeURLs = new haxe_ds_StringMap();
 		$this->assignObject("this", _hx_anonymous(array("URL" => php_Web::getURI())), null);
 		$this->ready = false;
 	}}
@@ -28,47 +28,52 @@ class hxbase_tpl_HxTpl {
 	}
 	public function loadTemplateFromFile($url) {
 		$this->ready = false;
-		$this->templateString = php_io_File::getContent($url);
+		$this->templateString = sys_io_File::getContent($url);
 		$this->loadTemplateFromString($this->templateString);
 		$this->ready = true;
 		return $this->ready;
 	}
 	public function getOutput() {
 		$this->output = $this->processXML($this->templateXML);
-		return $this->templateXML->getter_outerXml();
+		return $this->templateXML->get_outerXML();
 	}
-	public function assign($name, $value, $useHTMLEncode) {
+	public function assign($name, $value, $useHTMLEncode = null) {
 		if($useHTMLEncode === null) {
 			$useHTMLEncode = true;
 		}
-		$value = (($useHTMLEncode) ? StringTools::htmlEscape($value) : $value);
+		if($useHTMLEncode) {
+			$value = StringTools::htmlEscape($value, null);
+		} else {
+			$value = $value;
+		}
 		$this->assignedVariables->set($name, $value);
 		return $this;
 	}
-	public function assignObject($name, $obj, $useHTMLEncode) {
+	public function assignObject($name, $obj, $useHTMLEncode = null) {
 		if($useHTMLEncode === null) {
 			$useHTMLEncode = true;
 		}
 		{
-			$_g = 0; $_g1 = Reflect::fields($obj);
+			$_g = 0;
+			$_g1 = Reflect::fields($obj);
 			while($_g < $_g1->length) {
 				$propName = $_g1[$_g];
 				++$_g;
 				$propValue = Reflect::field($obj, $propName);
 				if(Reflect::isObject($propValue) && !Std::is($propValue, _hx_qtype("String"))) {
-					$this->assignObject($name . "." . $propName, $propValue, $useHTMLEncode);
+					$this->assignObject(_hx_string_or_null($name) . "." . _hx_string_or_null($propName), $propValue, $useHTMLEncode);
 				} else {
 					if(!Std::is($propValue, _hx_qtype("String"))) {
 						$propValue = Std::string($propValue);
 					}
-					$this->assign($name . "." . $propName, $propValue, $useHTMLEncode);
+					$this->assign(_hx_string_or_null($name) . "." . _hx_string_or_null($propName), $propValue, $useHTMLEncode);
 				}
 				unset($propValue,$propName);
 			}
 		}
 		return $this;
 	}
-	public function setSwitch($name, $value) {
+	public function setSwitch($name, $value = null) {
 		if($value === null) {
 			$value = true;
 		}
@@ -86,23 +91,23 @@ class hxbase_tpl_HxTpl {
 		$i++;
 		$this->loopCount->set($name, $i);
 		$loopBlock = null;
-		$loopBlock = $this->getBlock($name . ":" . $i);
+		$loopBlock = $this->getBlock(_hx_string_or_null($name) . ":" . _hx_string_rec($i, ""));
 		return $loopBlock;
 	}
-	public function useListInLoop($list, $loopName, $varName, $useHTMLEncode) {
+	public function useListInLoop($list, $loopName, $varName, $useHTMLEncode = null) {
 		if($useHTMLEncode === null) {
 			$useHTMLEncode = true;
 		}
 		$loopTpl = null;
 		if(null == $list) throw new HException('null iterable');
-		$»it = $list->iterator();
-		while($»it->hasNext()) {
-			$obj = $»it->next();
+		$__hx__it = $list->iterator();
+		while($__hx__it->hasNext()) {
+			$obj = $__hx__it->next();
 			$loopTpl = $this->newLoop($loopName);
 			$loopTpl->assignObject($varName, $obj, $useHTMLEncode);
 		}
 	}
-	public function hinclude($name, $url) {
+	public function hinclude($name, $url = null) {
 		if($url === null) {
 			$url = "";
 		}
@@ -115,23 +120,23 @@ class hxbase_tpl_HxTpl {
 		$list = null;
 		$string = "";
 		if(null == $xmlElement) throw new HException('null iterable');
-		$»it = $xmlElement->iterator();
-		while($»it->hasNext()) {
-			$childElm = $»it->next();
-			if($childElm->testIsElement() || $childElm->testIsDocument()) {
+		$__hx__it = $xmlElement->iterator();
+		while($__hx__it->hasNext()) {
+			$childElm = $__hx__it->next();
+			if($childElm->get_isElement() || $childElm->get_isDocument()) {
 				$string = $this->processXML_element($childElm);
 			} else {
-				$childElm->setter_value($this->processXML_textnode($childElm->getter_value()));
+				$childElm->set_value($this->processXML_textnode($childElm->get_value()));
 			}
 		}
 		return $string;
 	}
 	public function processXML_element($elm) {
 		$string = "";
-		if($elm->testIsDocument() || $elm->getter_name() !== "hxVar" && $elm->getter_name() !== "hxSwitch" && $elm->getter_name() !== "hxLoop" && $elm->getter_name() !== "hxInclude") {
+		if($elm->get_isDocument() || $elm->get_name() !== "hxVar" && $elm->get_name() !== "hxSwitch" && $elm->get_name() !== "hxLoop" && $elm->get_name() !== "hxInclude") {
 			$string = $this->processXML_element_regularElement($elm);
 		} else {
-			if($elm->getter_name() === "hxVar") {
+			if($elm->get_name() === "hxVar") {
 				$string = $this->processXML_element_hxVar($elm);
 			} else {
 				$this->processXML_element_templateBlock($elm);
@@ -143,9 +148,9 @@ class hxbase_tpl_HxTpl {
 		$string = null;
 		$string = "";
 		if(null == $elm->getAttList()) throw new HException('null iterable');
-		$»it = $elm->getAttList()->iterator();
-		while($»it->hasNext()) {
-			$attName = $»it->next();
+		$__hx__it = $elm->getAttList()->iterator();
+		while($__hx__it->hasNext()) {
+			$attName = $__hx__it->next();
 			$oldValue = null;
 			$oldValue = $elm->getAtt($attName);
 			if(_hx_index_of($oldValue, "{", null) !== -1) {
@@ -153,7 +158,7 @@ class hxbase_tpl_HxTpl {
 			}
 			unset($oldValue);
 		}
-		$string .= $this->processXML($elm);
+		$string .= _hx_string_or_null($this->processXML($elm));
 		return $string;
 	}
 	public function processXML_element_hxVar($elm) {
@@ -163,10 +168,10 @@ class hxbase_tpl_HxTpl {
 		$varName = $elm->getAtt("name");
 		if($varName !== null && $this->assignedVariables->exists($varName)) {
 			$varValue = $this->assignedVariables->get($varName);
-			$elm->setter_outerXml($varValue);
+			$elm->set_outerXML($varValue);
 		} else {
 			$varValue = $elm->getChildren(null, null)->toString();
-			$elm->setter_outerXml($varValue);
+			$elm->set_outerXML($varValue);
 		}
 		return $varValue;
 	}
@@ -177,18 +182,21 @@ class hxbase_tpl_HxTpl {
 		$blockName = null;
 		$newXML = "";
 		$blockName = $elm->getAtt("name");
-		switch($elm->getter_name()) {
-		case "hxSwitch":{
-			$newXML = $this->processXML_element_templateBlock_hxSwitch($elm, $blockName);
-		}break;
-		case "hxLoop":{
-			$newXML = $this->processXML_element_templateBlock_hxLoop($elm, $blockName);
-		}break;
-		case "hxInclude":{
-			$newXML = $this->processXML_element_templateBlock_hxInclude($elm, $blockName);
-		}break;
+		{
+			$_g = $elm->get_name();
+			switch($_g) {
+			case "hxSwitch":{
+				$newXML = $this->processXML_element_templateBlock_hxSwitch($elm, $blockName);
+			}break;
+			case "hxLoop":{
+				$newXML = $this->processXML_element_templateBlock_hxLoop($elm, $blockName);
+			}break;
+			case "hxInclude":{
+				$newXML = $this->processXML_element_templateBlock_hxInclude($elm, $blockName);
+			}break;
+			}
 		}
-		$elm->setter_outerXml($newXML);
+		$elm->set_outerXML($newXML);
 		return $string;
 	}
 	public function processXML_element_templateBlock_hxSwitch($elm_in, $blockName) {
@@ -197,7 +205,7 @@ class hxbase_tpl_HxTpl {
 		$newXML = "";
 		if($this->switches->exists($blockName) && $this->switches->get($blockName) === true) {
 			$blockTpl = $this->getBlock($blockName);
-			$blockTpl->loadTemplateFromString($elm_in->getter_innerXml());
+			$blockTpl->loadTemplateFromString($elm_in->get_innerXML());
 			$newXML = $blockTpl->getOutput();
 		}
 		return $newXML;
@@ -211,14 +219,15 @@ class hxbase_tpl_HxTpl {
 			$count = $this->loopCount->get($blockName);
 			if($count > 0) {
 				$blockTemplateXML = null;
-				$blockTemplateXML = $elm_in->getter_innerXml();
+				$blockTemplateXML = $elm_in->get_innerXML();
 				{
-					$_g1 = 1; $_g = $count + 1;
+					$_g1 = 1;
+					$_g = $count + 1;
 					while($_g1 < $_g) {
 						$i = $_g1++;
-						$blockTpl = $this->getBlock($blockName . ":" . $i);
+						$blockTpl = $this->getBlock(_hx_string_or_null($blockName) . ":" . _hx_string_rec($i, ""));
 						$blockTpl->loadTemplateFromString($blockTemplateXML);
-						$newXML .= $blockTpl->getOutput();
+						$newXML .= _hx_string_or_null($blockTpl->getOutput());
 						unset($i);
 					}
 				}
@@ -242,7 +251,7 @@ class hxbase_tpl_HxTpl {
 		if($url !== "") {
 			$blockTpl = $this->getBlock($blockName);
 			$blockTpl->loadTemplateFromFile($url);
-			$newXML .= $blockTpl->getOutput();
+			$newXML .= _hx_string_or_null($blockTpl->getOutput());
 		}
 		return $newXML;
 	}
@@ -252,7 +261,12 @@ class hxbase_tpl_HxTpl {
 		$r = new EReg("{([A-Za-z0-9]+[.A-Za-z0-9]*)}", "");
 		while($r->match($str_in)) {
 			$varName = $r->matched(1);
-			$varValue = (($this->assignedVariables->exists($varName)) ? $this->assignedVariables->get($varName) : "");
+			$varValue = null;
+			if($this->assignedVariables->exists($varName)) {
+				$varValue = $this->assignedVariables->get($varName);
+			} else {
+				$varValue = "";
+			}
 			$str_in = $r->replace($str_in, $varValue);
 			unset($varValue,$varName);
 		}
@@ -272,12 +286,12 @@ class hxbase_tpl_HxTpl {
 	public function __call($m, $a) {
 		if(isset($this->$m) && is_callable($this->$m))
 			return call_user_func_array($this->$m, $a);
-		else if(isset($this->»dynamics[$m]) && is_callable($this->»dynamics[$m]))
-			return call_user_func_array($this->»dynamics[$m], $a);
+		else if(isset($this->__dynamics[$m]) && is_callable($this->__dynamics[$m]))
+			return call_user_func_array($this->__dynamics[$m], $a);
 		else if('toString' == $m)
 			return $this->__toString();
 		else
-			throw new HException('Unable to call «'.$m.'»');
+			throw new HException('Unable to call <'.$m.'>');
 	}
 	function __toString() { return 'hxbase.tpl.HxTpl'; }
 }

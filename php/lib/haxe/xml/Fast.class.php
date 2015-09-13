@@ -3,8 +3,8 @@
 class haxe_xml_Fast {
 	public function __construct($x) {
 		if(!php_Boot::$skip_constructor) {
-		if($x->nodeType != Xml::$Document && $x->nodeType != Xml::$Element) {
-			throw new HException("Invalid nodeType " . $x->nodeType);
+		if((is_object($_t = $x->nodeType) && !($_t instanceof Enum) ? $_t !== Xml::$Document : $_t != Xml::$Document) && (is_object($_t2 = $x->nodeType) && !($_t2 instanceof Enum) ? $_t2 !== Xml::$Element : $_t2 != Xml::$Element)) {
+			throw new HException("Invalid nodeType " . Std::string($x->nodeType));
 		}
 		$this->x = $x;
 		$this->node = new haxe_xml__Fast_NodeAccess($x);
@@ -14,73 +14,31 @@ class haxe_xml_Fast {
 		$this->hasNode = new haxe_xml__Fast_HasNodeAccess($x);
 	}}
 	public $x;
-	public $name;
-	public $innerData;
-	public $innerHTML;
 	public $node;
 	public $nodes;
 	public $att;
 	public $has;
 	public $hasNode;
-	public $elements;
-	public function getName() {
-		return (($this->x->nodeType == Xml::$Document) ? "Document" : $this->x->getNodeName());
-	}
-	public function getInnerData() {
-		$it = $this->x->iterator();
-		if(!$it->hasNext()) {
-			throw new HException($this->getName() . " does not have data");
-		}
-		$v = $it->next();
-		if($it->hasNext()) {
-			throw new HException($this->getName() . " does not only have data");
-		}
-		if($v->nodeType != Xml::$PCData && $v->nodeType != Xml::$CData) {
-			throw new HException($this->getName() . " does not have data");
-		}
-		return $v->getNodeValue();
-	}
-	public function getInnerHTML() {
+	public function get_innerHTML() {
 		$s = new StringBuf();
 		if(null == $this->x) throw new HException('null iterable');
-		$»it = $this->x->iterator();
-		while($»it->hasNext()) {
-			$x = $»it->next();
-			$x1 = $x->toString();
-			if(is_null($x1)) {
-				$x1 = "null";
-			} else {
-				if(is_bool($x1)) {
-					$x1 = (($x1) ? "true" : "false");
-				}
-			}
-			$s->b .= $x1;
-			unset($x1);
+		$__hx__it = $this->x->iterator();
+		while($__hx__it->hasNext()) {
+			$x = $__hx__it->next();
+			$s->add($x->toString());
 		}
 		return $s->b;
-	}
-	public function getElements() {
-		$it = $this->x->elements();
-		return _hx_anonymous(array("hasNext" => (isset($it->hasNext) ? $it->hasNext: array($it, "hasNext")), "next" => array(new _hx_lambda(array(&$it), "haxe_xml_Fast_0"), 'execute')));
 	}
 	public function __call($m, $a) {
 		if(isset($this->$m) && is_callable($this->$m))
 			return call_user_func_array($this->$m, $a);
-		else if(isset($this->»dynamics[$m]) && is_callable($this->»dynamics[$m]))
-			return call_user_func_array($this->»dynamics[$m], $a);
+		else if(isset($this->__dynamics[$m]) && is_callable($this->__dynamics[$m]))
+			return call_user_func_array($this->__dynamics[$m], $a);
 		else if('toString' == $m)
 			return $this->__toString();
 		else
-			throw new HException('Unable to call «'.$m.'»');
+			throw new HException('Unable to call <'.$m.'>');
 	}
+	static $__properties__ = array("get_innerHTML" => "get_innerHTML");
 	function __toString() { return 'haxe.xml.Fast'; }
-}
-function haxe_xml_Fast_0(&$it) {
-	{
-		$x = $it->next();
-		if($x === null) {
-			return null;
-		}
-		return new haxe_xml_Fast($x);
-	}
 }

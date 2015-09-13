@@ -9,7 +9,12 @@ class Download {
 		if($params->exists("key")) {
 			$key = $params->get("key");
 			$sessionKey = $api->session->get("DOWNLOAD.key");
-			$str = str_replace($sessionKey, "", $key);
+			$str = null;
+			if($sessionKey === "") {
+				$str = implode(str_split ($key), "");
+			} else {
+				$str = str_replace($sessionKey, "", $key);
+			}
 			if($str === "") {
 				$url = $api->session->get("DOWNLOAD.url");
 				
