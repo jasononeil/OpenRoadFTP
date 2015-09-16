@@ -38,7 +38,7 @@ Next
 package hxbase.tpl;
 
 import php.Lib;
-import php.io.File;
+import sys.io.File;
 import haxe.xml.Fast;
 import StringTools;
 
@@ -51,11 +51,11 @@ class HxTpl
 	private var templateXML:XmlNode;
 	private var ready:Bool;
 	private var output:String;
-	private var assignedVariables:Hash<String>;
+	private var assignedVariables:Map<String, String>;
 	
-	private var switches:Hash<Bool>;
-	private var loopCount:Hash<Int>;
-	private var includeURLs:Hash<String>;
+	private var switches:Map<String, Bool>;
+	private var loopCount:Map<String, Int>;
+	private var includeURLs:Map<String, String>;
 	
 	//
 	// Switches, Loops and Includes all will occupy the same namespace
@@ -68,7 +68,7 @@ class HxTpl
 	// having to track down what data the template block contains, or even if
 	// it exists.
 	// 
-	private var blocks:Hash<HxTpl>;
+	private var blocks:Map<String, HxTpl>;
 	
 	/***********************************************************************
 	Constructor: new
@@ -82,11 +82,11 @@ class HxTpl
 	
 	public function new()
 	{
-		assignedVariables = new Hash();
-		blocks = new Hash();
-		switches = new Hash();
-		loopCount = new Hash();
-		includeURLs = new Hash();
+		assignedVariables = new Map();
+		blocks = new Map();
+		switches = new Map();
+		loopCount = new Map();
+		includeURLs = new Map();
 		
 		this.assignObject('this', 
 		{
@@ -146,11 +146,7 @@ class HxTpl
 	{
 		ready = false;
 		
-		#if neko
-		templateString = neko.io.File.getContent(url);
-		#elseif php
-		templateString = php.io.File.getContent(url);
-		#end
+		templateString = sys.io.File.getContent(url);
 		loadTemplateFromString(templateString);
 		
 		ready = true;

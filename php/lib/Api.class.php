@@ -12,15 +12,16 @@ class Api {
 	public $tpl;
 	public function initiateFTP($username, $password, $id) {
 		$server = AppConfig::$ftpServer;
-		$tmpFolder = "tmp/" . $id . "-" . $username;
+		$tmpFolder = "tmp/" . _hx_string_or_null($id) . "-" . _hx_string_or_null($username);
 		$home = null;
 		$home = AppConfig::getHomeDir($username);
 		try {
 			$this->ftp = new ftp_FtpConnection($server, $username, $password, $tmpFolder, $home, null, null);
-		}catch(Exception $»e) {
-			$_ex_ = ($»e instanceof HException) ? $»e->e : $»e;
+		}catch(Exception $__hx__e) {
+			$_ex_ = ($__hx__e instanceof HException) ? $__hx__e->e : $__hx__e;
 			if(($e = $_ex_) instanceof hxbase_util_Error){
-				switch($e->code) {
+				$_g = $e->code;
+				switch($_g) {
 				case "FTP.SERVER_NOT_FOUND":{
 					throw new HException(new hxbase_util_Error("FTP.SERVER_DOWN", _hx_anonymous(array("fileName" => "Api.hx", "lineNumber" => 111, "className" => "Api", "methodName" => "initiateFTP"))));
 				}break;
@@ -28,7 +29,7 @@ class Api {
 					throw new HException(new hxbase_util_Error("SESSION.INCORRECT_LOGIN", _hx_anonymous(array("fileName" => "Api.hx", "lineNumber" => 113, "className" => "Api", "methodName" => "initiateFTP"))));
 				}break;
 				}
-			} else throw $»e;;
+			} else throw $__hx__e;;
 		}
 	}
 	public function checkLoggedIn() {
@@ -58,10 +59,11 @@ class Api {
 	public function session_keepalive() {
 		try {
 			$this->session->check();
-		}catch(Exception $»e) {
-			$_ex_ = ($»e instanceof HException) ? $»e->e : $»e;
+		}catch(Exception $__hx__e) {
+			$_ex_ = ($__hx__e instanceof HException) ? $__hx__e->e : $__hx__e;
 			if(($err = $_ex_) instanceof hxbase_util_Error){
-				switch($err->code) {
+				$_g = $err->code;
+				switch($_g) {
 				case "SESSION.NO_SESSION":{
 					throw new HException(new hxbase_util_Error("SESSION.NOT_LOGGED_IN", _hx_anonymous(array("fileName" => "Api.hx", "lineNumber" => 178, "className" => "Api", "methodName" => "session_keepalive"))));
 				}break;
@@ -69,7 +71,7 @@ class Api {
 					throw new HException(new hxbase_util_Error("SESSION.TIMED_OUT", _hx_anonymous(array("fileName" => "Api.hx", "lineNumber" => 180, "className" => "Api", "methodName" => "session_keepalive"))));
 				}break;
 				}
-			} else throw $»e;;
+			} else throw $__hx__e;;
 		}
 	}
 	public function session_logoff() {
@@ -92,36 +94,41 @@ class Api {
 		$ftpFileList = new ftp_FtpFileList($this->ftp, $path);
 		$tpl->loadTemplateFromFile("./tpl/dirList.hxtpl");
 		$onlyLastName = new EReg("([^/]+)/\$", "");
-		$name = (($onlyLastName->match($path)) ? $onlyLastName->matched(1) : "Home");
+		$name = null;
+		if($onlyLastName->match($path)) {
+			$name = $onlyLastName->matched(1);
+		} else {
+			$name = "Home";
+		}
 		$tpl->assign("dir.name", $name, null);
 		$tpl->assign("dir.path", $path, null);
 		if(null == $ftpFileList->links) throw new HException('null iterable');
-		$»it = $ftpFileList->links->iterator();
-		while($»it->hasNext()) {
-			$link = $»it->next();
-			if(!AppConfig::$limitSymlinks || Lambda::has(AppConfig::$allowedSymlinks, $link->name, null)) {
+		$__hx__it = $ftpFileList->links->iterator();
+		while($__hx__it->hasNext()) {
+			$link = $__hx__it->next();
+			if(!AppConfig::$limitSymlinks || Lambda::has(AppConfig::$allowedSymlinks, $link->name)) {
 				$ftpItem = $tpl->newLoop("ftpItem");
 				$ftpItem->assignObject("file", $link, null);
 				$ftpItem->assign("file.type", "dir", null);
-				$ftpItem->assign("file.path", $link->path . "/", null);
+				$ftpItem->assign("file.path", _hx_string_or_null($link->path) . "/", null);
 				unset($ftpItem);
 			}
 		}
 		if(null == $ftpFileList->dirs) throw new HException('null iterable');
-		$»it = $ftpFileList->dirs->iterator();
-		while($»it->hasNext()) {
-			$dir = $»it->next();
-			$ftpItem = $tpl->newLoop("ftpItem");
-			$ftpItem->assignObject("file", $dir, null);
-			unset($ftpItem);
+		$__hx__it = $ftpFileList->dirs->iterator();
+		while($__hx__it->hasNext()) {
+			$dir = $__hx__it->next();
+			$ftpItem1 = $tpl->newLoop("ftpItem");
+			$ftpItem1->assignObject("file", $dir, null);
+			unset($ftpItem1);
 		}
 		if(null == $ftpFileList->files) throw new HException('null iterable');
-		$»it = $ftpFileList->files->iterator();
-		while($»it->hasNext()) {
-			$file = $»it->next();
-			$ftpItem = $tpl->newLoop("ftpItem");
-			$ftpItem->assignObject("file", $file, null);
-			unset($ftpItem);
+		$__hx__it = $ftpFileList->files->iterator();
+		while($__hx__it->hasNext()) {
+			$file = $__hx__it->next();
+			$ftpItem2 = $tpl->newLoop("ftpItem");
+			$ftpItem2->assignObject("file", $file, null);
+			unset($ftpItem2);
 		}
 		$str = $tpl->getOutput();
 		return $str;
@@ -130,7 +137,7 @@ class Api {
 		$this->checkLoggedIn();
 		$file = null;
 		$file = $this->ftp->getFileAt($oldPath);
-		if($file->type != ftp_FtpFileType::$link) {
+		if((is_object($_t = $file->type) && !($_t instanceof Enum) ? $_t !== ftp_FtpFileType::$link : $_t != ftp_FtpFileType::$link)) {
 			$file->move($newPath);
 		}
 		return true;
@@ -139,7 +146,7 @@ class Api {
 		$this->checkLoggedIn();
 		$file = null;
 		$file = $this->ftp->getFileAt($path);
-		if($file->type != ftp_FtpFileType::$link) {
+		if((is_object($_t = $file->type) && !($_t instanceof Enum) ? $_t !== ftp_FtpFileType::$link : $_t != ftp_FtpFileType::$link)) {
 			$file->delete();
 		}
 		return true;
@@ -153,10 +160,10 @@ class Api {
 				$path = $pathsToDelete[$_g];
 				++$_g;
 				$file = $this->ftp->getFileAt($path);
-				if($file->type != ftp_FtpFileType::$link) {
+				if((is_object($_t = $file->type) && !($_t instanceof Enum) ? $_t !== ftp_FtpFileType::$link : $_t != ftp_FtpFileType::$link)) {
 					$file->delete();
 				}
-				unset($path);
+				unset($path,$_t);
 			}
 		}
 		return true;
@@ -169,12 +176,12 @@ class Api {
 			while($_g < $filesToMove->length) {
 				$fileData = $filesToMove[$_g];
 				++$_g;
-				$newPath = $newDir . $fileData->name;
+				$newPath = _hx_string_or_null($newDir) . _hx_string_or_null($fileData->name);
 				$file = $this->ftp->getFileAt($fileData->oldPath);
-				if($file->type != ftp_FtpFileType::$link) {
+				if((is_object($_t = $file->type) && !($_t instanceof Enum) ? $_t !== ftp_FtpFileType::$link : $_t != ftp_FtpFileType::$link)) {
 					$file->move($newPath);
 				}
-				unset($newPath,$fileData);
+				unset($newPath,$fileData,$_t);
 			}
 		}
 		return true;
@@ -187,7 +194,7 @@ class Api {
 			while($_g < $filesToMove->length) {
 				$fileData = $filesToMove[$_g];
 				++$_g;
-				$newPath = $newDir . $fileData->name;
+				$newPath = _hx_string_or_null($newDir) . _hx_string_or_null($fileData->name);
 				$file = $this->ftp->getFileAt($fileData->oldPath);
 				$file->copy($newPath);
 				unset($newPath,$fileData);
@@ -219,12 +226,12 @@ class Api {
 	public function __call($m, $a) {
 		if(isset($this->$m) && is_callable($this->$m))
 			return call_user_func_array($this->$m, $a);
-		else if(isset($this->»dynamics[$m]) && is_callable($this->»dynamics[$m]))
-			return call_user_func_array($this->»dynamics[$m], $a);
+		else if(isset($this->__dynamics[$m]) && is_callable($this->__dynamics[$m]))
+			return call_user_func_array($this->__dynamics[$m], $a);
 		else if('toString' == $m)
 			return $this->__toString();
 		else
-			throw new HException('Unable to call «'.$m.'»');
+			throw new HException('Unable to call <'.$m.'>');
 	}
 	static $inst;
 	static function main() {

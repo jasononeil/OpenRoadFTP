@@ -28,21 +28,6 @@ class Type {
 			return _hx_ttype($c);
 		}
 	}
-	static function getEnum($o) {
-		if(!$o instanceof Enum) {
-			return null;
-		} else {
-			return _hx_ttype(get_class($o));
-		}
-	}
-	static function getSuperClass($c) {
-		$s = get_parent_class($c->__tname__);
-		if($s === false) {
-			return null;
-		} else {
-			return _hx_ttype($s);
-		}
-	}
 	static function getClassName($c) {
 		if($c === null) {
 			return null;
@@ -54,7 +39,7 @@ class Type {
 	}
 	static function resolveClass($name) {
 		$c = _hx_qtype($name);
-		if($c instanceof _hx_class) {
+		if($c instanceof _hx_class || $c instanceof _hx_interface) {
 			return $c;
 		} else {
 			return null;
@@ -68,22 +53,9 @@ class Type {
 			return null;
 		}
 	}
-	static function createInstance($cl, $args) {
-		if($cl->__qname__ === "Array") {
-			return new _hx_array(array());
-		}
-		if($cl->__qname__ === "String") {
-			return $args[0];
-		}
-		$c = $cl->__rfl__();
-		if($c === null) {
-			return null;
-		}
-		return $inst = $c->getConstructor() ? $c->newInstanceArgs($args->»a) : $c->newInstanceArgs();
-	}
 	static function createEmptyInstance($cl) {
 		if($cl->__qname__ === "Array") {
-			return new _hx_array(array());
+			return (new _hx_array(array()));
 		}
 		if($cl->__qname__ === "String") {
 			return "";
@@ -105,8 +77,8 @@ class Type {
 			}
 			php_Boot::$skip_constructor = false;
 			return $i;
-		}catch(Exception $»e) {
-			$_ex_ = ($»e instanceof HException) ? $»e->e : $»e;
+		}catch(Exception $__hx__e) {
+			$_ex_ = ($__hx__e instanceof HException) ? $__hx__e->e : $__hx__e;
 			$e = $_ex_;
 			{
 				php_Boot::$skip_constructor = false;
@@ -115,77 +87,28 @@ class Type {
 		}
 		return null;
 	}
-	static function createEnum($e, $constr, $params) {
+	static function createEnum($e, $constr, $params = null) {
 		$f = Reflect::field($e, $constr);
 		if($f === null) {
-			throw new HException("No such constructor " . $constr);
+			throw new HException("No such constructor " . _hx_string_or_null($constr));
 		}
 		if(Reflect::isFunction($f)) {
 			if($params === null) {
-				throw new HException("Constructor " . $constr . " need parameters");
+				throw new HException("Constructor " . _hx_string_or_null($constr) . " need parameters");
 			}
 			return Reflect::callMethod($e, $f, $params);
 		}
 		if($params !== null && $params->length !== 0) {
-			throw new HException("Constructor " . $constr . " does not need parameters");
+			throw new HException("Constructor " . _hx_string_or_null($constr) . " does not need parameters");
 		}
 		return $f;
 	}
-	static function createEnumIndex($e, $index, $params) {
-		$c = _hx_array_get(Type::getEnumConstructs($e), $index);
-		if($c === null) {
-			throw new HException($index . " is not a valid enum constructor index");
-		}
-		return Type::createEnum($e, $c, $params);
-	}
-	static function getInstanceFields($c) {
-		if($c->__qname__ === "String") {
-			return new _hx_array(array("substr", "charAt", "charCodeAt", "indexOf", "lastIndexOf", "split", "toLowerCase", "toUpperCase", "toString", "length"));
-		}
-		if($c->__qname__ === "Array") {
-			return new _hx_array(array("push", "concat", "join", "pop", "reverse", "shift", "slice", "sort", "splice", "toString", "copy", "unshift", "insert", "remove", "iterator", "length"));
-		}
-		
-		$rfl = $c->__rfl__();
-		if($rfl === null) return new _hx_array(array());
-		$r = array();
-		$internals = array('__construct', '__call', '__get', '__set', '__isset', '__unset', '__toString');
-		$ms = $rfl->getMethods();
-		while(list(, $m) = each($ms)) {
-			$n = $m->getName();
-			if(!$m->isStatic() && ! in_array($n, $internals)) $r[] = $n;
-		}
-		$ps = $rfl->getProperties();
-		while(list(, $p) = each($ps))
-			if(!$p->isStatic()) $r[] = $p->getName();
-		return new _hx_array(array_values(array_unique($r)));
-	}
-	static function getClassFields($c) {
-		if($c->__qname__ === "String") {
-			return new _hx_array(array("fromCharCode"));
-		}
-		if($c->__qname__ === "Array") {
-			return new _hx_array(array());
-		}
-		
-		$rfl = $c->__rfl__();
-		if($rfl === null) return new _hx_array(array());
-		$ms = $rfl->getMethods();
-		$r = array();
-		while(list(, $m) = each($ms))
-			if($m->isStatic()) $r[] = $m->getName();
-		$ps = $rfl->getProperties();
-		while(list(, $p) = each($ps))
-			if($p->isStatic()) $r[] = $p->getName();
-		;
-		return new _hx_array(array_unique($r));
-	}
 	static function getEnumConstructs($e) {
 		if($e->__tname__ == 'Bool') {
-			return new _hx_array(array("true", "false"));
+			return (new _hx_array(array("true", "false")));
 		}
 		if($e->__tname__ == 'Void') {
-			return new _hx_array(array());
+			return (new _hx_array(array()));
 		}
 		return new _hx_array($e->__constructors);
 	}
@@ -231,52 +154,6 @@ class Type {
 			return ValueType::TClass($c);
 		}
 		return ValueType::$TUnknown;
-	}
-	static function enumEq($a, $b) {
-		if($a === $b) {
-			return true;
-		}
-		try {
-			if(!_hx_equal($a->index, $b->index)) {
-				return false;
-			}
-			{
-				$_g1 = 0; $_g = count($a->params);
-				while($_g1 < $_g) {
-					$i = $_g1++;
-					if(Type::getEnum($a->params[$i]) !== null) {
-						if(!Type::enumEq($a->params[$i], $b->params[$i])) {
-							return false;
-						}
-					} else {
-						if(!_hx_equal($a->params[$i], $b->params[$i])) {
-							return false;
-						}
-					}
-					unset($i);
-				}
-			}
-		}catch(Exception $»e) {
-			$_ex_ = ($»e instanceof HException) ? $»e->e : $»e;
-			$e = $_ex_;
-			{
-				return false;
-			}
-		}
-		return true;
-	}
-	static function enumConstructor($e) {
-		return $e->tag;
-	}
-	static function enumParameters($e) {
-		if(_hx_field($e, "params") === null) {
-			return new _hx_array(array());
-		} else {
-			return new _hx_array($e->params);
-		}
-	}
-	static function enumIndex($e) {
-		return $e->index;
 	}
 	function __toString() { return 'Type'; }
 }

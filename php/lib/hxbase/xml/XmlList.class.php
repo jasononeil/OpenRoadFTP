@@ -1,25 +1,25 @@
 <?php
 
 class hxbase_xml_XmlList extends HList {
-	public function __construct($node, $list) { if(!php_Boot::$skip_constructor) {
+	public function __construct($node = null, $list = null) { if(!php_Boot::$skip_constructor) {
 		parent::__construct();
 		if($node !== null) {
 			$this->add($node);
 		}
 		if($list !== null) {
 			if(null == $list) throw new HException('null iterable');
-			$»it = $list->iterator();
-			while($»it->hasNext()) {
-				$n = $»it->next();
+			$__hx__it = $list->iterator();
+			while($__hx__it->hasNext()) {
+				$n = $__hx__it->next();
 				$this->add($n);
 			}
 		}
 	}}
 	public function addList($listToAdd) {
 		if(null == $listToAdd) throw new HException('null iterable');
-		$»it = $listToAdd->iterator();
-		while($»it->hasNext()) {
-			$item = $»it->next();
+		$__hx__it = $listToAdd->iterator();
+		while($__hx__it->hasNext()) {
+			$item = $__hx__it->next();
 			$this->add($item);
 		}
 		return $this;
@@ -65,7 +65,7 @@ class hxbase_xml_XmlList extends HList {
 		while($itemIndex === 0 && $iter->hasNext()) {
 			$i++;
 			$currentChild = $iter->next();
-			if($currentChild->getter_xml() === $childToSearchFor->getter_xml()) { $itemIndex = $i; }
+			if($currentChild->get_xml() === $childToSearchFor->get_xml()) { $itemIndex = $i; }
 			unset($currentChild);
 		}
 		return $itemIndex;
@@ -73,19 +73,10 @@ class hxbase_xml_XmlList extends HList {
 	public function toString() {
 		$s = new StringBuf();
 		if(null == $this) throw new HException('null iterable');
-		$»it = $this->iterator();
-		while($»it->hasNext()) {
-			$child = $»it->next();
-			$x = $child->toString();
-			if(is_null($x)) {
-				$x = "null";
-			} else {
-				if(is_bool($x)) {
-					$x = (($x) ? "true" : "false");
-				}
-			}
-			$s->b .= $x;
-			unset($x);
+		$__hx__it = $this->iterator();
+		while($__hx__it->hasNext()) {
+			$child = $__hx__it->next();
+			$s->add($child->toString());
 		}
 		return $s->b;
 	}
@@ -93,11 +84,11 @@ class hxbase_xml_XmlList extends HList {
 }
 function hxbase_xml_XmlList_0(&$attName, &$attValue, $n) {
 	{
-		return $n->testIsElement() && $n->hasAtt($attName) && $n->getAtt($attName) === $attValue;
+		return $n->get_isElement() && $n->hasAtt($attName) && $n->getAtt($attName) === $attValue;
 	}
 }
 function hxbase_xml_XmlList_1(&$tagName, $n) {
 	{
-		return $n->testIsElement() && $n->getter_name() === $tagName;
+		return $n->get_isElement() && $n->get_name() === $tagName;
 	}
 }

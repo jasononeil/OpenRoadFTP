@@ -6,7 +6,7 @@ class FtpDir
 {
 	public var path:String;
 	public var ftp:FtpConnection;
-	public var exists(getter_exists,null):Bool;
+	public var exists(get,null):Bool;
 	public var name:String;
 	public var owner:String;
 	public var group:String;
@@ -36,7 +36,7 @@ class FtpDir
 	
 	public function toString() { return path; }
 	
-	public function getter_exists() 
+	public function get_exists() 
 	{
 		return ftp.isDir(path);
 	}

@@ -13,12 +13,12 @@ class php_Boot {
 	
 function _hx_add($a, $b) {
 	if (!_hx_is_numeric($a) || !_hx_is_numeric($b)) {
-		return $a . $b;
+		return _hx_string_or_null($a) . _hx_string_or_null($b);
 	} else {
 		return $a + $b;
 	}
 }
-		
+
 function _hx_anonymous($arr = array()) {
 	$o = new _hx_anonymous();
 	foreach($arr as $k => $v)
@@ -27,68 +27,100 @@ function _hx_anonymous($arr = array()) {
 }
 
 class _hx_array implements ArrayAccess, IteratorAggregate {
-	var $»a;
+	var $a;
 	var $length;
 	function __construct($a = array()) {
-		$this->»a = $a;
+		$this->a = $a;
 		$this->length = count($a);
 	}
 
 	function concat($a) {
-		return new _hx_array(array_merge($this->»a, $a->»a));
+		return new _hx_array(array_merge($this->a, $a->a));
 	}
 
 	function copy() {
-		return new _hx_array($this->»a);
+		return new _hx_array($this->a);
 	}
 
 	function &get($index) {
-		if(isset($this->»a[$index])) return $this->»a[$index];
+		if(isset($this->a[$index])) return $this->a[$index];
 		return null;
 	}
 
 	function insert($pos, $x) {
-		array_splice($this->»a, $pos, 0, array($x));
+		array_splice($this->a, $pos, 0, array($x));
 		$this->length++;
 	}
 
 	function iterator() {
-		return new _hx_array_iterator($this->»a);
+		return new _hx_array_iterator($this->a);
 	}
-	
+
 	function getIterator() {
 		return $this->iterator();
 	}
 
 	function join($sep) {
-		return implode($sep, $this->»a);
+		return implode($sep, array_map('_hx_string_rec',$this->a,array()));
 	}
 
 	function pop() {
-		$r = array_pop($this->»a);
-		$this->length = count($this->»a);
+		$r = array_pop($this->a);
+		$this->length = count($this->a);
 		return $r;
 	}
 
 	function push($x) {
-		$this->»a[] = $x;
+		$this->a[] = $x;
 		return ++$this->length;
 	}
 
 	function remove($x) {
-		for($i = 0; $i < count($this->»a); $i++)
-			if($this->»a[$i] === $x) {
-				unset($this->»a[$i]);
-				$this->»a = array_values($this->»a);
+		for($i = 0; $i < count($this->a); $i++)
+			if($this->a[$i] === $x) {
+				unset($this->a[$i]);
+				$this->a = array_values($this->a);
 				$this->length--;
 				return true;
 			}
 		return false;
 	}
 
+	function indexOf($x, $fromIndex) {
+		$i = ($fromIndex === null) ? 0 : $fromIndex;
+		$len = $this->length;
+		$a = $this->a;
+		if ($i < 0) {
+			$i += $len;
+			if ($i < 0) $i = 0;
+		}
+		while ($i < $len) {
+			if ($a[$i] === $x)
+				return $i;
+			$i++;
+		}
+		return -1;
+	}
+
+	function lastIndexOf($x, $fromIndex) {
+		$len = $this->length;
+		$i = ($fromIndex === null) ? $len - 1 : $fromIndex;
+		$a = $this->a;
+		if ($i >= $len)
+			$i = $len - 1;
+		else if ($i < 0)
+			$i += $len;
+		while ($i >= 0) {
+			if ($a[$i] === $x)
+				return $i;
+			$i--;
+		}
+		return -1;
+	}
+
 	function removeAt($pos) {
-		if(array_key_exists($pos, $this->»a)) {
-			unset($this->»a[$pos]);
+		if(array_key_exists($pos, $this->a)) {
+			unset($this->a[$pos]);
 			$this->length--;
 			return true;
 		} else
@@ -96,35 +128,35 @@ class _hx_array implements ArrayAccess, IteratorAggregate {
 	}
 
 	function reverse() {
-		$this->»a = array_reverse($this->»a, false);
+		$this->a = array_reverse($this->a, false);
 	}
 
 	function shift() {
-		$r = array_shift($this->»a);
-		$this->length = count($this->»a);
+		$r = array_shift($this->a);
+		$this->length = count($this->a);
 		return $r;
 	}
 
 	function slice($pos, $end) {
-		if($end == null)
-			return new _hx_array(array_slice($this->»a, $pos));
+		if($end === null)
+			return new _hx_array(array_slice($this->a, $pos));
 		else
-			return new _hx_array(array_slice($this->»a, $pos, $end-$pos));
+			return new _hx_array(array_slice($this->a, $pos, $end-$pos));
 	}
 
 	function sort($f) {
-		usort($this->»a, $f);
+		usort($this->a, $f);
 	}
 
 	function splice($pos, $len) {
 		if($len < 0) $len = 0;
-		$nh = new _hx_array(array_splice($this->»a, $pos, $len));
-		$this->length = count($this->»a);
+		$nh = new _hx_array(array_splice($this->a, $pos, $len));
+		$this->length = count($this->a);
 		return $nh;
 	}
 
 	function toString() {
-		return '['.implode(', ', $this->»a).']';
+		return '['.implode(',', array_map('_hx_string_rec',$this->a,array())).']';
 	}
 
 	function __toString() {
@@ -132,26 +164,34 @@ class _hx_array implements ArrayAccess, IteratorAggregate {
 	}
 
 	function unshift($x) {
-		array_unshift($this->»a, $x);
+		array_unshift($this->a, $x);
 		$this->length++;
+	}
+
+	function map($f) {
+		return new _hx_array(array_map($f, $this->a));
+	}
+
+	function filter($f) {
+		return new _hx_array(array_values(array_filter($this->a,$f)));
 	}
 
 	// ArrayAccess methods:
 	function offsetExists($offset) {
-		return isset($this->»a[$offset]);
+		return isset($this->a[$offset]);
 	}
 
 	function offsetGet($offset) {
-		if(isset($this->»a[$offset])) return $this->»a[$offset];
+		if(isset($this->a[$offset])) return $this->a[$offset];
 		return null;
 	}
 
 	function offsetSet($offset, $value) {
 		if($this->length <= $offset) {
-			$this->»a = array_merge($this->»a, array_fill(0, $offset+1-$this->length, null));
+			$this->a = array_merge($this->a, array_fill(0, $offset+1-$this->length, null));
 			$this->length = $offset+1;
 		}
-		return $this->»a[$offset] = $value;
+		return $this->a[$offset] = $value;
 	}
 
 	function offsetUnset($offset) {
@@ -160,29 +200,29 @@ class _hx_array implements ArrayAccess, IteratorAggregate {
 }
 
 class _hx_array_iterator implements Iterator {
-	private $»a;
-	private $»i;
+	private $a;
+	private $i;
 	public function __construct($a) {
-		$this->»a = $a;
-		$this->»i = 0;
+		$this->a = $a;
+		$this->i = 0;
 	}
 
 	public function next() {
 		if(!$this->hasNext()) return null;
-		return $this->»a[$this->»i++];
+		return $this->a[$this->i++];
 	}
 
 	public function hasNext() {
-		return $this->»i < count($this->»a);
+		return $this->i < count($this->a);
 	}
 
 	public function current() {
 		if (!$this->hasNext()) return false;
-		return $this->»a[$this->»i];
+		return $this->a[$this->i];
 	}
 
 	public function key() {
-		return $this->»i;
+		return $this->i;
 	}
 
 	public function valid() {
@@ -190,10 +230,10 @@ class _hx_array_iterator implements Iterator {
 	}
 
 	public function rewind() {
-		$this->»i = 0;
+		$this->i = 0;
 	}
 	public function size() {
-		return count($this->»a);
+		return count($this->a);
 	}
 }
 
@@ -214,7 +254,12 @@ function _hx_cast($v, $type) {
 	}
 }
 
-function _hx_char_at($o, $i) { $c = substr($o, $i, 1); return FALSE === $c ? '' : $c; }
+function _hx_char_at($o, $i) {
+	if ($i < 0)
+		return '';
+	$c = substr($o, $i, 1);
+	return FALSE === $c ? '' : $c;
+}
 
 function _hx_char_code_at($s, $pos) {
 	if($pos < 0 || $pos >= strlen($s)) return null;
@@ -239,7 +284,21 @@ function _hx_equal($x, $y) {
 	}
 }
 
+function _hx_mod($x, $y) {
+	if (is_int($x) && is_int($y)) {
+		if ($y == 0) return 0;
+		return $x % $y;
+	}
+	if (!is_nan($x) && !is_nan($y) && !is_finite($y) && is_finite($x)) {
+		return $x;
+	}
+	return fmod($x, $y);
+}
+
 function _hx_error_handler($errno, $errmsg, $filename, $linenum, $vars) {
+	if (!(error_reporting() & $errno)) {
+		return false;
+	}
 	$msg = $errmsg . ' (errno: ' . $errno . ') in ' . $filename . ' at line #' . $linenum;
 	$e = new HException($msg, $errmsg, $errno, _hx_anonymous(array('fileName' => 'Boot.hx', 'lineNumber' => __LINE__, 'className' => 'php.Boot', 'methodName' => '_hx_error_handler')));
 	$e->setFile($filename);
@@ -320,8 +379,8 @@ function _hx_field($o, $field) {
 							return $o->$field;
 						}
 					}
-				} else if(isset($o->»dynamics[$field])) {
-					return $o->»dynamics[$field];
+				} else if(isset($o->__dynamics[$field])) {
+					return $o->__dynamics[$field];
 				} else {
 					return array($o, $field);
 				}
@@ -334,20 +393,19 @@ function _hx_field($o, $field) {
 
 function _hx_get_object_vars($o) {
 	$a = array_keys(get_object_vars($o));
-	if(isset($o->»dynamics))
-		$a = array_merge($a, array_keys($o->»dynamics));
+	if(isset($o->__dynamics))
+		$a = array_merge($a, array_keys($o->__dynamics));
 	$arr = array();
-	while($k = current($a)) {
-		if(substr($k, 0, 1) != '»')
-			$arr[] = $k;
-		next($a);
+	for($i=0;$i<count($a); $i++)
+	{
+		$arr[] = '' . $a[$i];
 	}
 	return $arr;
 }
 
 function _hx_has_field($o, $field) {
 	return
-		(is_object($o) && (method_exists($o, $field) || isset($o->$field) || property_exists($o, $field) || isset($o->»dynamics[$field])))
+		(is_object($o) && (method_exists($o, $field) || isset($o->$field) || property_exists($o, $field) || isset($o->__dynamics[$field])))
 		||
 		(is_string($o) && (in_array($field, array('toUpperCase', 'toLowerCase', 'charAt', 'charCodeAt', 'indexOf', 'lastIndexOf', 'split', 'substr', 'toString', 'length'))))
 	;
@@ -369,7 +427,7 @@ function _hx_instanceof($v, $t) {
 		case 'Array'  : return is_array($v);
 		case 'String' : return is_string($v) && !_hx_is_lambda($v);
 		case 'Bool'   : return is_bool($v);
-		case 'Int'    : return is_int($v);
+		case 'Int'    : return (is_int($v) || (is_float($v) && intval($v) == $v && !is_nan($v))) && abs($v) <= 0x80000000;
 		case 'Float'  : return is_float($v) || is_int($v);
 		case 'Dynamic': return true;
 		case 'Class'  : return ($v instanceof _hx_class || $v instanceof _hx_interface) && $v->__tname__ != 'Enum';
@@ -388,7 +446,7 @@ function _hx_is_numeric($v)
 }
 
 function _hx_last_index_of($s, $value, $startIndex = null) {
-	$x = strrpos($s, $value, $startIndex === null ? null : strlen($s) - $startIndex);
+	$x = strrpos($s, $value, $startIndex === null ? 0 : $startIndex-strlen($s));
 	if($x === false)
 		return -1;
 	else
@@ -400,33 +458,33 @@ function _hx_len($o) {
 }
 
 class _hx_list_iterator implements Iterator {
-	private $»h;
-	private $»list;
-	private $»counter;
+	private $h;
+	private $list;
+	private $counter;
 	public function __construct($list) {
-		$this->»list = $list;
+		$this->list = $list;
 		$this->rewind();
 	}
 
 	public function next() {
-		if($this->»h == null) return null;
-		$this->»counter++;
-		$x = $this->»h[0];
-		$this->»h = $this->»h[1];
+		if($this->h == null) return null;
+		$this->counter++;
+		$x = $this->h[0];
+		$this->h = $this->h[1];
 		return $x;
 	}
 
 	public function hasNext() {
-		return $this->»h != null;
+		return $this->h != null;
 	}
 
 	public function current() {
 		if (!$this->hasNext()) return null;
-		return $this->»h[0];
+		return $this->h[0];
 	}
 
 	public function key() {
-		return $this->»counter;
+		return $this->counter;
 	}
 
 	public function valid() {
@@ -434,12 +492,12 @@ class _hx_list_iterator implements Iterator {
 	}
 
 	public function rewind() {
-		$this->»counter = -1;
-		$this->»h = $this->»list->h;
+		$this->counter = -1;
+		$this->h = $this->list->h;
 	}
 
 	public function size() {
-		return $this->»list->length;
+		return $this->list->length;
 	}
 }
 
@@ -477,14 +535,7 @@ function _hx_set_method($o, $field, $func) {
 }
 
 function _hx_shift_right($v, $n) {
-	$z = 0x80000000;
-	if ($z & $v) {
-		$v = ($v>>1);
-		$v &= (~$z);
-		$v |= 0x40000000;
-		$v = ($v>>($n-1));
-	} else $v = ($v>>$n);
-	return $v;
+	return ($v >= 0) ? ($v >> $n) : ($v >> $n) & (0x7fffffff >> ($n-1));
 }
 
 function _hx_string_call($s, $method, $params) {
@@ -495,12 +546,16 @@ function _hx_string_call($s, $method, $params) {
 		case 'charAt'     : return substr($s, $params[0], 1);
 		case 'charCodeAt' : return _hx_char_code_at($s, $params[0]);
 		case 'indexOf'    : return _hx_index_of($s, $params[0], (count($params) > 1 ? $params[1] : null));
-		case 'lastIndexOf': return _hx_last_index_of($s, (count($params) > 1 ? $params[1] : null), null);
+		case 'lastIndexOf': return _hx_last_index_of($s, $params[0], (count($params) > 1 ? $params[1] : null));
 		case 'split'      : return _hx_explode($params[0], $s);
 		case 'substr'     : return _hx_substr($s, $params[0], (count($params) > 1 ? $params[1] : null));
 		case 'toString'   : return $s;
 		default           : throw new HException('Invalid Operation: ' . $method);
 	}
+}
+
+function _hx_string_or_null($s) {
+	return $s === null ? 'null' : $s;
 }
 
 function _hx_string_rec($o, $s) {
@@ -517,7 +572,7 @@ function _hx_string_rec($o, $s) {
 				$b .= '(';
 				for($i = 0; $i < count($o->params); $i++) {
 					if($i > 0)
-						$b .= ', ' . _hx_string_rec($o->params[$i], $s);
+						$b .= ',' . _hx_string_rec($o->params[$i], $s);
 					else
 						$b .= _hx_string_rec($o->params[$i], $s);
 				}
@@ -525,7 +580,10 @@ function _hx_string_rec($o, $s) {
 			}
 			return $b;
 		} else {
-			if($o instanceof _hx_anonymous) {
+			if ($o instanceof _hx_anonymous) {
+				if ($o->toString && is_callable($o->toString)) {
+					return call_user_func($o->toString);
+				}
 				$rfl = new ReflectionObject($o);
 				$b2 = "{
 ";
@@ -561,12 +619,12 @@ function _hx_string_rec($o, $s) {
 		}
 	}
 	if(is_string($o)) {
-		if(_hx_is_lambda($o)) return '«function»';
-		if(strlen($s) > 0)    return '"' . str_replace('"', '\"', $o) . '"';
+		if(_hx_is_lambda($o)) return '<function>';
+//		if(strlen($s) > 0)    return '"' . str_replace('"', '\"', $o) . '"';
 		else                  return $o;
 	}
 	if(is_array($o)) {
-		if(is_callable($o)) return '«function»';
+		if(is_callable($o)) return '<function>';
 		$str = '[';
 		$s .= "	";
 		$first = true;
@@ -575,7 +633,7 @@ function _hx_string_rec($o, $s) {
 		{
 			if ($first && $k === 0)
 				$assoc = false;
-			$str .= ($first ? '' : ', ') . ($assoc 
+			$str .= ($first ? '' : ',') . ($assoc
 				? _hx_string_rec($k, $s) . '=>' . _hx_string_rec($o[$k], $s)
 				: _hx_string_rec($o[$k], $s)
 			);
@@ -600,6 +658,28 @@ function _hx_substr($s, $pos, $len) {
 		return '';
 	else
 		return $s;
+}
+
+function _hx_substring($s, $startIndex, $endIndex) {
+	$len = strlen($s);
+	if ($endIndex === null)
+		$endIndex = $len;
+	else if ($endIndex < 0)
+		$endIndex = 0;
+	else if ($endIndex > $len)
+		$endIndex  = $len;
+
+	if ($startIndex < 0)
+		$startIndex = 0;
+	else if ($startIndex > $len)
+		$startIndex = $len;
+
+	if ($startIndex > $endIndex) {
+		$tmp = $startIndex;
+		$startIndex = $endIndex;
+		$endIndex = $tmp;
+	}
+	return _hx_substr($s, $startIndex, $endIndex - $startIndex);
 }
 
 function _hx_trace($v, $i) {

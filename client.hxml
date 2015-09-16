@@ -3,4 +3,7 @@
 -cp src/classes/
 -cp src/
 -lib feffects
+# HttpAsyncConnection is used by JS that isn't compiled from Haxe, so
+# we need to explicitly keep it from being removed by DCE
+--macro keep('haxe.remoting.HttpAsyncConnection')
 

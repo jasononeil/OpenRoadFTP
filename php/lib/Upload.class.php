@@ -7,16 +7,21 @@ class Upload {
 		$api->checkLoggedIn();
 		try {
 			$params = php_Web::getParams();
-			$folder = (($params->exists("path")) ? $params->get("path") : "/");
+			$folder = null;
+			if($params->exists("path")) {
+				$folder = $params->get("path");
+			} else {
+				$folder = "/";
+			}
 			$localPath = $_FILES["userfile"]["tmp_name"];
-			$ftpPath = $folder . basename($_FILES["userfile"]["name"]);
+			$ftpPath = _hx_string_or_null($folder) . _hx_string_or_null(basename($_FILES["userfile"]["name"]));
 			$api->upload($localPath, $ftpPath);
 			php_Lib::hprint("success");
-		}catch(Exception $»e) {
-			$_ex_ = ($»e instanceof HException) ? $»e->e : $»e;
+		}catch(Exception $__hx__e) {
+			$_ex_ = ($__hx__e instanceof HException) ? $__hx__e->e : $__hx__e;
 			$e = $_ex_;
 			{
-				php_Lib::hprint("error: " . $e);
+				php_Lib::hprint("error: " . Std::string($e));
 			}
 		}
 	}
